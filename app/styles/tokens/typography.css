@@ -1,0 +1,5 @@
+@theme inline {
+    --font-bricolage: var(--font-bricolage);
+    --font-railway: var(--font-railway);
+    --font-unbounded: var(--font-unbounded);
+}
