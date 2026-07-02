@@ -1,22 +1,14 @@
 @import "tailwindcss";
 
-@theme inline {
-  --color-bg:#141414;
-  --color-card: #282828;
-  --color-input: #1f1f1f;
-  --color-fg: #ffffff;
-  --color-fg-muted: rgba(255, 255, 255, 0.65);
-  --color-fg-dim: rgba(255, 255, 255, 0.40);
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-focus: rgba(255, 255, 255, 0.20);
-  --color-accent: #ab0000;
-  --color-accent-hover: #c40000;
+@import "./styles/tokens/colors.css";
+@import "./styles/tokens/typography.css";
 
-  --font-sans: var(--font-bricolage);
-}
+@import "./styles/pages/inventory.css";
+@import "./styles/pages/login.css";
+@import "./styles/pages/projects.css";
+@import "./styles/pages/main.css";
 
 body {
-  background: var(--color-bg);
+  background-color: var(--color-bg);
   color: var(--color-fg);
-  font-family: var(--font-sans);
 }
