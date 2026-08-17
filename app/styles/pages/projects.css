@@ -44,8 +44,9 @@
     border-right: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
     border-bottom: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
     border-left: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
+    border-radius: 0.5rem;
     background-color: #181818;
-    padding: 0.5rem;
+    padding: 2rem;
     text-align: center;
 }
 
