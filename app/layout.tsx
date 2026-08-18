@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, DM_Sans, Raleway, Unbounded } from "next/font/google";
 import './globals.css';
