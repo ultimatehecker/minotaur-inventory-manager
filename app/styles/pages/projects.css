@@ -1,0 +1,111 @@
+.projects-page {
+    min-height: calc(100vh - 60px);
+    width: 100%;
+    padding: 3rem 1rem;
+}
+
+.projects-container {
+    width: min(100%, 72rem);
+    margin-inline: auto;
+}
+
+.projects-title {
+    margin-bottom: 4rem;
+    color: var(--color-fg);
+    font-family: var(--font-bricolage);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.projects-empty {
+    color: var(--color-fg-muted);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-align: center;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 2rem;
+}
+
+.project-card {
+    display: flex;
+    aspect-ratio: 5 / 6;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
+    border-right: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
+    border-bottom: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
+    border-left: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
+    border-radius: 0.5rem;
+    background-color: #181818;
+    padding: 2rem;
+    text-align: center;
+}
+
+.project-card-content {
+    display: flex;
+    max-width: 90%;
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-block: 1rem;
+}
+
+.project-card-title {
+    color: var(--color-fg);
+    font-family: var(--font-bricolage);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1.375;
+    text-transform: uppercase;
+}
+
+.project-card-description {
+    margin-top: 0.75rem;
+    color: var(--color-fg-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.625;
+}
+
+.project-card-action {
+    border-radius: 9999px;
+    background-color: var(--color-accent);
+    padding: 0.75rem 1.5rem;
+    color: var(--color-fg);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background-color 150ms ease;
+}
+
+.project-card-action:hover {
+    background-color: var(--color-accent-hover);
+}
+
+@media (min-width: 640px) {
+    .projects-page {
+        padding-inline: 2rem;
+    }
+
+    .projects-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .projects-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
