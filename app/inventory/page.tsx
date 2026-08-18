@@ -33,10 +33,7 @@ export default async function Inventory() {
                                 <h2 className="text-lg font-semibold uppercase tracking-wide">{category.name}</h2>
                                 <p className="mt-2 text-xs text-fg/70">{category._count.children > 0 ? `${category._count.children} subcategories` : `${category._count.items} parts`}</p>
                             </div>
-
-                            <span className="text-xs font-medium uppercase tracking-wide">View Parts{" "}
-                                <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
-                            </span>
+                            <p className="text-xs font-medium uppercase tracking-wide">View Parts</p>
                         </Link>
                     ))}
                     </section>
