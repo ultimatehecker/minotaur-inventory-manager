@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Raleway, Unbounded } from "next/font/google";
+import { Bricolage_Grotesque, DM_Sans, Raleway, Unbounded } from "next/font/google";
 import './globals.css';
 
 const bricolage = Bricolage_Grotesque({ 
@@ -24,6 +24,12 @@ const unbounded = Unbounded({
   variable: '--font-unbounded'
 });
 
+const dm_sans = DM_Sans({ 
+  subsets: ['latin'], 
+  weight: ['300', '400', '500'],
+  variable: '--font-dmsans'
+})
+
 export const metadata: Metadata = {
   title: 'MinoManager',
   description: 'Inventory management system for FRC Minotaur 1369',
@@ -31,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children } : Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${unbounded.variable} ${raleway.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${bricolage.variable} ${unbounded.variable} ${raleway.variable} ${dm_sans.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col">
         {children}
       </body>
