@@ -8,16 +8,17 @@ const secret = process.env.SESSION_SECRET;
 if (!secret) throw new Error("A Session Secret is required");
 const encodedKey = new TextEncoder().encode(secret);
 
-async function isValidSession(token: string | undefined) : Promise<boolean> {
+async function isValidSession(token: string | undefined): Promise<boolean> {
     if (!token) return false;
 
     try {
-        const { payload } = await jwtVerify(token, encodedKey, { algorithms: ['HS256'] });
+        const { payload } = await jwtVerify(token, encodedKey, { algorithms: ["HS256"] });
         const expiresAt = payload.expiresAt;
 
-        if (typeof expiresAt !== 'string') return false;
+        if (typeof expiresAt !== "string") return false;
         return new Date(expiresAt) > new Date();
     } catch (error) {
+        console.error(error);
         return false;
     }
 }
@@ -46,5 +47,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)'],
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };

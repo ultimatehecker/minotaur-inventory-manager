@@ -9,6 +9,6 @@
 @import "./styles/pages/main.css";
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-fg);
+    background-color: var(--color-bg);
+    color: var(--color-fg);
 }
