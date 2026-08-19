@@ -1,21 +1,21 @@
-import 'dotenv/config';
-import { createInterface } from 'node:readline/promises';
-import { stdin as input, stdout as output } from 'node:process';
-import { hash } from 'bcryptjs';
+import "dotenv/config";
+import { createInterface } from "node:readline/promises";
+import { stdin as input, stdout as output } from "node:process";
+import { hash } from "bcryptjs";
 
-import prisma from './prisma';
+import prisma from "./prisma";
 
 const rl = createInterface({ input, output });
 
 async function main() {
-    console.log('=== Create new user ===');
+    console.log("=== Create new user ===");
 
-    const firstName = await rl.question('First name: ');
-    const lastName = await rl.question('Last name: ');
-    const password = await rl.question('Password: ');
-    const typeIn = await rl.question('Type (1=Standard, 2=Manager, 3=Administrator): ');
+    const firstName = await rl.question("First name: ");
+    const lastName = await rl.question("Last name: ");
+    const password = await rl.question("Password: ");
+    const typeIn = await rl.question("Type (1=Standard, 2=Manager, 3=Administrator): ");
 
-    const type = typeIn.trim() === '3' ? 'ADMINISTRATOR' : (typeIn.trim() === '2' ? 'MANAGER' : 'STANDARD');
+    const type = typeIn.trim() === "3" ? "ADMINISTRATOR" : typeIn.trim() === "2" ? "MANAGER" : "STANDARD";
     const pwdHash = await hash(password, 12);
 
     const user = await prisma.user.create({
@@ -23,8 +23,8 @@ async function main() {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
             pwdHash,
-            type
-        }
+            type,
+        },
     });
 
     console.log(`User created with ID: ${user.id}`);
@@ -33,7 +33,7 @@ async function main() {
     await prisma.$disconnect();
 }
 
-main().catch(error => {
+main().catch((error) => {
     console.error(error);
-    process.exit(1)
-})
+    process.exit(1);
+});

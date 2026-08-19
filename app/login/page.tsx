@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
 import { useActionState } from "react";
-import { login, type LoginState } from '@/server/auth';
+import { login, type LoginState } from "@/server/auth";
 
 export default function Login() {
     const [state, formAction, pending] = useActionState<LoginState, FormData>(login, undefined);
@@ -16,51 +16,35 @@ export default function Login() {
 
                 <div className="grid grid-cols-2 gap-2">
                     <div className="login-form-field">
-                        <label htmlFor="firstName" className="block text-xs text-font">First Name</label>
-                        <input
-                            id="firstName"
-                            name="firstName"
-                            type="text"
-                            required
-                            placeholder="First Name"
-                            autoComplete="given-name"
-                            className="login-form-input"
-                        />
+                        <label htmlFor="firstName" className="block text-xs text-font">
+                            First Name
+                        </label>
+                        <input id="firstName" name="firstName" type="text" required placeholder="First Name" autoComplete="given-name" className="login-form-input" />
                     </div>
 
                     <div className="login-form-field">
-                        <label htmlFor="lastName" className="block text-xs text-font">Last Name</label>
-                        <input 
-                            id="lastName"
-                            name="lastName"
-                            type="text"
-                            required
-                            placeholder="Last Name"
-                            autoComplete="family-name"
-                            className="login-form-input"
-                        />
+                        <label htmlFor="lastName" className="block text-xs text-font">
+                            Last Name
+                        </label>
+                        <input id="lastName" name="lastName" type="text" required placeholder="Last Name" autoComplete="family-name" className="login-form-input" />
                     </div>
                 </div>
 
                 <div className="login-form-field">
-                    <label htmlFor="password" className="block text-xs text-font">Password</label>
-                    <input 
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        placeholder="Enter Password"
-                        autoComplete="current-password"
-                        className="login-form-input"
-                    />
+                    <label htmlFor="password" className="block text-xs text-font">
+                        Password
+                    </label>
+                    <input id="password" name="password" type="password" required placeholder="Enter Password" autoComplete="current-password" className="login-form-input" />
                 </div>
 
                 {state?.error && (
-                    <p role="alert" className="text-xs text-accent">{state.error}</p>
+                    <p role="alert" className="text-xs text-accent">
+                        {state.error}
+                    </p>
                 )}
 
                 <button type="submit" disabled={pending} className="w-full rounded-full bg-accent py-2.5 text-sm text-fg text-font hover:bg-accent-hover disabled:opacity-60 disabled:cursor-not-allowed transition-colors">
-                    {pending ? 'Signing In...' : 'Sign In'}
+                    {pending ? "Signing In..." : "Sign In"}
                 </button>
             </form>
         </main>

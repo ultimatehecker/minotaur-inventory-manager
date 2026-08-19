@@ -1,7 +1,7 @@
-import 'server-only';
+import "server-only";
 
-import { cookies } from 'next/headers';
-import { SignJWT, jwtVerify } from 'jose';
+import { cookies } from "next/headers";
+import { SignJWT, jwtVerify } from "jose";
 
 const sessionCookie: string = "session";
 const sessionDurationMs: number = 7 * 24 * 60 * 60 * 1000;
@@ -12,34 +12,30 @@ const encodedKey = new TextEncoder().encode(secret);
 
 export type Session = {
     user: {
-        id: string,
-        firstName: string,
-        lastName: string,
-        isAdmin: boolean
-    },
-    expiresAt: Date
-}
+        id: string;
+        firstName: string;
+        lastName: string;
+        isAdmin: boolean;
+    };
+    expiresAt: Date;
+};
 
 type SessionPayload = {
-    userId: string,
-    firstName: string,
-    lastName: string,
-    isAdmin: boolean,
-    expiresAt: string
+    userId: string;
+    firstName: string;
+    lastName: string;
+    isAdmin: boolean;
+    expiresAt: string;
+};
+
+async function encrypt(payload: SessionPayload): Promise<string> {
+    return new SignJWT(payload).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime("7d").sign(encodedKey);
 }
 
-async function encrypt(payload: SessionPayload) : Promise<string> {
-    return new SignJWT(payload)
-        .setProtectedHeader({ alg: "HS256" })
-        .setIssuedAt()
-        .setExpirationTime("7d")
-        .sign(encodedKey);
-}
-
-async function decrypt(token: string) : Promise<SessionPayload | null> {
+async function decrypt(token: string): Promise<SessionPayload | null> {
     try {
         const { payload } = await jwtVerify(token, encodedKey, {
-            algorithms: ["HS256"]
+            algorithms: ["HS256"],
         });
 
         return payload as SessionPayload;
@@ -48,13 +44,13 @@ async function decrypt(token: string) : Promise<SessionPayload | null> {
     }
 }
 
-export async function authenticate() : Promise<Session | null> {
+export async function authenticate(): Promise<Session | null> {
     const theCookieStore = await cookies();
     const token = theCookieStore.get(sessionCookie)?.value;
-    if(!token) return null;
+    if (!token) return null;
 
     const payload = await decrypt(token);
-    if(!payload) return null;
+    if (!payload) return null;
 
     if (new Date(payload.expiresAt) < new Date()) return null;
 
@@ -63,10 +59,10 @@ export async function authenticate() : Promise<Session | null> {
             id: payload?.userId,
             firstName: payload?.firstName,
             lastName: payload?.lastName,
-            isAdmin: payload?.isAdmin
+            isAdmin: payload?.isAdmin,
         },
-        expiresAt: new Date(payload.expiresAt)
-    }
+        expiresAt: new Date(payload.expiresAt),
+    };
 }
 
 export async function createSession(user: Session["user"]) {
@@ -76,16 +72,16 @@ export async function createSession(user: Session["user"]) {
         firstName: user.firstName,
         lastName: user.lastName,
         isAdmin: user.isAdmin,
-        expiresAt: expiresAt.toISOString()
+        expiresAt: expiresAt.toISOString(),
     });
 
     const theCookieStore = await cookies();
-    theCookieStore.set(sessionCookie, token,{
+    theCookieStore.set(sessionCookie, token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         expires: expiresAt,
-        path: "/"
+        path: "/",
     });
 }
 

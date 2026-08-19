@@ -8,7 +8,7 @@ type InventoryCategoryPageProps = {
     params: Promise<{ id: string }>;
 };
 
-export default async function InventoryCategoryPage({params, }: InventoryCategoryPageProps) {
+export default async function InventoryCategoryPage({ params }: InventoryCategoryPageProps) {
     const { id } = await params;
     const categoryId = Number(id);
 
@@ -34,7 +34,7 @@ export default async function InventoryCategoryPage({params, }: InventoryCategor
                 orderBy: { name: "asc" },
                 include: {
                     checkouts: {
-                        select: { quantityCheckedOut: true},
+                        select: { quantityCheckedOut: true },
                     },
                 },
             },
@@ -51,12 +51,16 @@ export default async function InventoryCategoryPage({params, }: InventoryCategor
             <main className="min-h-[calc(100vh-64px)] w-full px-4 py-10 font-bricolage sm:px-8">
                 <div className="mx-auto max-w-6xl">
                     <div className="mb-8 flex items-center gap-2 text-sm text-fg-muted">
-                        <Link href="/inventory" className="transition-colors hover:text-fg">Inventory</Link>
+                        <Link href="/inventory" className="transition-colors hover:text-fg">
+                            Inventory
+                        </Link>
 
                         {category.parent ? (
                             <>
                                 <span>/</span>
-                                <Link href={`/inventory/${category.parent.id}`} className="transition-colors hover:text-fg">{category.parent.name}</Link>
+                                <Link href={`/inventory/${category.parent.id}`} className="transition-colors hover:text-fg">
+                                    {category.parent.name}
+                                </Link>
                             </>
                         ) : null}
 
@@ -67,7 +71,7 @@ export default async function InventoryCategoryPage({params, }: InventoryCategor
                     <h1 className="mb-10 text-center text-4xl font-black uppercase tracking-widest text-fg">{category.name}</h1>
 
                     {category.children.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"> 
+                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                             {category.children.map((child) => (
                                 <Link key={child.id} href={`/inventory/${child.id}`} className="group flex min-h-36 flex-col justify-between bg-accent p-5 text-fg transition-colors hover:bg-accent-hover">
                                     <div>
@@ -121,9 +125,7 @@ export default async function InventoryCategoryPage({params, }: InventoryCategor
                         </div>
                     ) : null}
 
-                    {category.children.length === 0 && category.items.length === 0 ? (
-                        <p className="text-center text-sm text-fg-muted">This category does not have any subcategories or parts yet.</p>
-                    ) : null}
+                    {category.children.length === 0 && category.items.length === 0 ? <p className="text-center text-sm text-fg-muted">This category does not have any subcategories or parts yet.</p> : null}
                 </div>
             </main>
         </>

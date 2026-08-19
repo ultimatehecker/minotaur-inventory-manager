@@ -1,15 +1,15 @@
-import Link from 'next/link';
-import { LogOut, Settings } from 'lucide-react';
-import { authenticate } from '@/lib/session';
-import { logout } from '@/server/auth';
-import Image from 'next/image';
-import logo from '../public/logo.png'
+import Link from "next/link";
+import { LogOut, Settings } from "lucide-react";
+import { authenticate } from "@/lib/session";
+import { logout } from "@/server/auth";
+import Image from "next/image";
+import logo from "../public/logo.png";
 
 const navItems = [
-    { href: '/inventory', label: 'Inventory' },
-    { href: '/checkout', label: 'Checkout' },
-    { href: '/projects', label: 'Projects' },
-]
+    { href: "/inventory", label: "Inventory" },
+    { href: "/checkout", label: "Checkout" },
+    { href: "/projects", label: "Projects" },
+];
 
 function displayName(firstName: string, lastName: string): string {
     return `${firstName} ${lastName.charAt(0).toUpperCase()}.`;
@@ -20,7 +20,7 @@ export default async function Navbar() {
 
     return (
         <header className="h-20 w-full border-b border-border bg-bg/95 backdrop-blur-sm flex items-center justify-between px-6 sticky top-0 z-50">
-            <div className="flex items-center gap-6"> 
+            <div className="flex items-center gap-6">
                 <Link href="/" className="flex items-center gap-2.5 group">
                     <Image src={logo} alt="Minotaur Logo" width={38} height={38} className="rounded-md transition-transform group-hover:scale-105" />
                     <span className="text-2xl tracking-tight font-semibold text-fg font-dmsans">MinoManager</span>
@@ -44,7 +44,7 @@ export default async function Navbar() {
 
                 <div className="flex h-8 items-center gap-2 rounded-full border border-border px-3 py-1 font-medium text-fg">
                     <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-                    <span className="max-w-37.5 truncate text-lg">{session == null ? 'Unknown' : displayName(session.user.firstName, session.user.lastName)}</span>
+                    <span className="max-w-37.5 truncate text-lg">{session == null ? "Unknown" : displayName(session.user.firstName, session.user.lastName)}</span>
                 </div>
 
                 <form action={logout}>
@@ -55,5 +55,5 @@ export default async function Navbar() {
                 </form>
             </div>
         </header>
-    )
+    );
 }
