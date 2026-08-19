@@ -4,7 +4,6 @@ import { cookies } from 'next/headers';
 import { SignJWT, jwtVerify } from 'jose';
 
 const sessionCookie: string = "session";
-const sessionCookieStore: string = "sessions_store";
 const sessionDurationMs: number = 7 * 24 * 60 * 60 * 1000;
 
 const secret = process.env.SESSION_SECRET;

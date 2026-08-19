@@ -18,6 +18,7 @@ async function isValidSession(token: string | undefined) : Promise<boolean> {
         if (typeof expiresAt !== 'string') return false;
         return new Date(expiresAt) > new Date();
     } catch (error) {
+        console.error(error);
         return false;
     }
 }
