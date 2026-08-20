@@ -13,7 +13,7 @@ export default async function Home() {
                     <h1 className="text-xl">
                         Welcome, {session?.user.firstName} {session?.user.lastName}!
                     </h1>
-                    <p className="text-sm text-fg-muted">{session?.user.isAdmin ? "Administrator" : "Standard"}</p>
+                    <p className="text-sm text-fg-muted">{session?.user.role === "ADMINISTRATOR" ? "Administrator" : "Standard"}</p>
                     <form action={logout}>
                         <button type="submit" className="rounded-full bg-accent px-6 py-2 text-sm hover:bg-accent-hover transition-colors">
                             Logout
