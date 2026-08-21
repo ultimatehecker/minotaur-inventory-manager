@@ -122,7 +122,7 @@ export function ReactivateUserControl({userId, userRole}: ReactivateUserControlP
             <button
                 type="submit"
                 disabled={pending}
-                className="rounded-md border border-accent/50 px-3 py-1.5 text-sm text-accent transition-colors hover:border-accent hover:bg-accent/10 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-md border border-green-600/50 px-3 py-1.5 text-sm text-green-600 transition-colors hover:border-green-500 hover:bg-green-500/10 disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {pending ? "Reactivating..." : "Reactivate"}
             </button>
