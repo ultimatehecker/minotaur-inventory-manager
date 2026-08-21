@@ -40,12 +40,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    border-top: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
-    border-right: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
-    border-bottom: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
-    border-left: 0.125rem solid color-mix(in srgb, var(--color-accent) 80%, transparent);
-    border-radius: 0.5rem;
-    background-color: #181818;
+    border-radius: 0.25rem;
+    background-color: var(--color-accent);
     padding: 2rem;
     text-align: center;
 }
