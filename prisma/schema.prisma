@@ -84,6 +84,7 @@ model Project {
   checkouts     ProjectCheckout[]
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
+  archivedAt    DateTime?
   createdById   Int
   createdByUser User              @relation("ProjectCreatedBy", fields: [createdById], references: [id])
 }
