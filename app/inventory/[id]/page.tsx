@@ -34,6 +34,9 @@ export default async function InventoryCategoryPage({ params }: InventoryCategor
                 orderBy: { name: "asc" },
                 include: {
                     checkouts: {
+                        where: {
+                            project: { status: "ACTIVE" },
+                        },
                         select: { quantityCheckedOut: true },
                     },
                 },
