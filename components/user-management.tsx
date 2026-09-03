@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { createUser, deactivateUser, reactivateUser, type CreateUserState, type ReactivateUserState } from "@/server/users";
+import { createUser, deactivateUser, reactivateUser, promoteUser, demoteUser, type CreateUserState, type ReactivateUserState, type PromoteUserState } from "@/server/users";
 
 export function CreateUserForm() {
     const [role, setRole] = useState<"STANDARD" | "MANAGER">("STANDARD");
@@ -134,6 +134,66 @@ export function ReactivateUserControl({userId, userRole}: ReactivateUserControlP
             {state?.success && (
                 <p className="max-w-64 text-right text-xs text-fg-muted">{state.success}</p>
             )}
+        </form>
+    );
+}
+
+
+type PromoteUserControlProps = { userId: number };
+
+export function PromoteUserControl({ userId }: PromoteUserControlProps) {
+    const promoteAction = promoteUser.bind(null, userId);
+    const [state, formAction, pending] = useActionState<PromoteUserState, FormData>(promoteAction, undefined);
+
+    return (
+        <form action={formAction} className="flex flex-col items-end gap-2">
+            <input
+                name="password"
+                type="password"
+                required
+                minLength={8}
+                maxLength={100}
+                autoComplete="new-password"
+                placeholder="New manager password"
+                className="w-56 rounded-md border bg-input px-3 py-2 text-sm outline-none transition-colors placeholder:text-fg-dim focus:border-border-focus"
+            />
+
+            <button
+                type="submit"
+                disabled={pending}
+                className="rounded-md border border-green-600/50 px-3 py-1.5 text-sm text-green-600 transition-colors hover:border-green-500 hover:bg-green-500/10 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+                {pending ? "Promoting..." : "Promote"}
+            </button>
+
+            {state?.error && (
+                <p className="max-w-64 text-right text-xs text-accent">{state.error}</p>
+            )}
+
+            {state?.success && (
+                <p className="max-w-64 text-right text-xs text-fg-muted">{state.success}</p>
+            )}
+        </form>
+    );
+}
+
+type DemoteUserButtonProps = { userId: number; userName: string };
+
+export function DemoteUserButton({ userId, userName }: DemoteUserButtonProps) {
+    const demoteAction = demoteUser.bind( null, userId );
+
+    return (
+        <form
+            action={demoteAction}
+            onSubmit={(event) => {
+                if (!window.confirm(`Demote ${userName} to Standard? Their password will be reset to the current team password.`)) {
+                    event.preventDefault();
+                }
+            }}
+        >
+            <button type="submit" className="rounded-md border border-accent/50 px-3 py-1.5 text-sm text-accent transition-colors hover:border-accent hover:bg-accent/10">
+                Demote
+            </button>
         </form>
     );
 }
