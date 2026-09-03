@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { authenticate } from "@/lib/session";
+import { authenticate } from "@/server/session";
 import prisma from "@/prisma/prisma";
 
 const CreateProjectSchema = z.object({

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { CreateCategoryForm, DeleteCategoryButton } from "@/components/category-management";
-import { authenticate } from "@/lib/session";
+import { authenticate } from "@/server/session";
 import prisma from "@/prisma/prisma";
 
 export default async function InventorySettings() {

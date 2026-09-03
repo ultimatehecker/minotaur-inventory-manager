@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { authenticate } from "@/lib/session";
+import { authenticate } from "@/server/session";
 import prisma from "@/prisma/prisma";
 
 /**
@@ -50,6 +50,7 @@ const CreateUserSchema = z
 
 export type CreateUserState = { error?: string; success?: string } | undefined;
 export type ReactivateUserState = | { error?: string; success?: string; } | undefined;
+export type PromoteUserState = | { error?: string; success?: string; } | undefined;
 
 async function requireAdministrator() {
     const session = await authenticate();
@@ -112,9 +113,7 @@ export async function createUser(_previousState: CreateUserState, formData: Form
     }
 
     const passwordToHash = role === "STANDARD" ? standardUserPassword : password;
-
     const pwdHash = await hash(passwordToHash, 12);
-
     const existingUser = await prisma.user.findUnique({
         where: {
             firstName_lastName: {
@@ -124,35 +123,11 @@ export async function createUser(_previousState: CreateUserState, formData: Form
         },
     });
 
-    if (existingUser?.active) {
-        return {
-            error: "A user with that name already exists.",
-        };
-    }
-
     if (existingUser) {
-        await prisma.user.update({
-            where: {
-                id: existingUser.id,
-            },
-            data: {
-                type: role,
-                pwdHash,
-                active: true,
-            },
-        });
-    } else {
-        await prisma.user.create({
-            data: {
-                firstName,
-                lastName,
-                type: role,
-                pwdHash,
-            },
-        });
+        return { error: existingUser.active ? "A user with that name already exists." : "A deactivated user with that name already exists. Reactivate that account instead." };
     }
 
-    revalidatePath("/settings");
+    revalidatePath("/settings/accounts");
 
     return {
         success: `${firstName} ${lastName} was created successfully.`,
@@ -189,7 +164,7 @@ export async function deactivateUser(userId: number): Promise<void> {
         },
     });
 
-    revalidatePath("/settings");
+    revalidatePath("/settings/accounts");
 }
 
 export async function reactivateUser(userId: number, _previousState: ReactivateUserState, formData: FormData): Promise<ReactivateUserState> {
@@ -270,9 +245,114 @@ export async function reactivateUser(userId: number, _previousState: ReactivateU
         data: { active: true, pwdHash },
     });
 
-    revalidatePath("/settings");
+    revalidatePath("/settings/accounts");
 
     return {
         success: `${user.firstName} ${user.lastName} was reactivated.`,
     };
+}
+
+export async function promoteUser(userId: number, _previousState: PromoteUserState, formData: FormData): Promise<PromoteUserState> {
+    await requireAdministrator();
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            type: true,
+            active: true,
+        },
+    });
+
+    if (!user || !user.active) {
+        return { error: "User does not exist or is deactivated." };
+    }
+
+    if (user.type === "ADMINISTRATOR") {
+        return { error: "Administrator roles cannot be changed here." };
+    }
+
+    if (user.type === "MANAGER") {
+        return { error: "This user is already a Manager." };
+    }
+
+    const password = formData.get("password");
+
+    if (typeof password !== "string" || password.length < 8 || password.length > 100) {
+        return { error: "Managers must have a password between 8 and 100 characters." };
+    }
+
+    if (password === standardUserPassword) {
+        return { error: "Managers cannot use the standard team password." };
+    }
+
+    if (await isPrivilegedPasswordInUse(password)) {
+        return { error: "Manager passwords must be unique." };
+    }
+
+    const pwdHash = await hash(password, 12);
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            type: "MANAGER",
+            pwdHash,
+        },
+    });
+
+    revalidatePath("/settings/accounts");
+
+    return { success: `${user.firstName} ${user.lastName} was promoted to Manager.` };
+}
+
+export async function demoteUser(userId: number): Promise<void> {
+    await requireAdministrator();
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            type: true,
+            active: true,
+        },
+    });
+
+    if (!user || !user.active || user.type !== "MANAGER") {
+        return;
+    }
+
+    const pwdHash = await hash(standardUserPassword, 12);
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            type: "STANDARD",
+            pwdHash,
+        },
+    });
+
+    revalidatePath("/settings/accounts");
+}
+
+async function isPrivilegedPasswordInUse(password: string, excludedUserId?: number): Promise<boolean> {
+    const privilegedUsers = await prisma.user.findMany({
+        where: {
+            active: true,
+            type: { in: ["MANAGER", "ADMINISTRATOR",] },
+            ...(excludedUserId === undefined ? {} : {
+                id: { not: excludedUserId },
+            }),
+        },
+        select: { pwdHash: true },
+    });
+
+    for (const user of privilegedUsers) {
+        if (await compare(password, user.pwdHash)) {
+            return true;
+        }
+    }
+
+    return false;
 }

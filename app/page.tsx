@@ -1,5 +1,5 @@
 import NavBar from "@/components/navbar";
-import { authenticate } from "@/lib/session";
+import { authenticate } from "@/server/session";
 import { logout } from "@/server/auth";
 
 export default async function Home() {

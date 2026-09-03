@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { CreateUserForm, DeactivateUserButton, ReactivateUserControl } from "@/components/user-management";
-import { authenticate } from "@/lib/session";
+import { authenticate } from "@/server/session";
 import prisma from "@/prisma/prisma";
 
 function formatRole(role: string): string {

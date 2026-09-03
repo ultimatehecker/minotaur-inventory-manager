@@ -5,7 +5,7 @@ import { compare } from "bcryptjs";
 import { redirect } from "next/navigation";
 
 import prisma from "../prisma/prisma";
-import { createSession, deleteSession } from "../lib/session";
+import { createSession, deleteSession } from "./session";
 
 const LoginSchema = z.object({
     firstName: z.string().trim().min(1).max(50),

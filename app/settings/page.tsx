@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { authenticate } from "@/lib/session";
+import { authenticate } from "@/server/session";
 
 export default async function Settings() {
     const session = await authenticate();
