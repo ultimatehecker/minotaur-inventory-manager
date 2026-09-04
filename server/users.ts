@@ -93,21 +93,15 @@ export async function createUser(_previousState: CreateUserState, formData: Form
     if (role === "MANAGER") {
         const privilegedUsers = await prisma.user.findMany({
             where: {
-                type: {
-                    in: ["MANAGER", "ADMINISTRATOR"],
-                },
+                type: { in: ["MANAGER", "ADMINISTRATOR"] },
                 active: true,
             },
-            select: {
-                pwdHash: true,
-            },
+            select: { pwdHash: true },
         });
 
         for (const user of privilegedUsers) {
             if (await compare(password, user.pwdHash)) {
-                return {
-                    error: "Manager passwords must be unique.",
-                };
+                return { error: "Manager passwords must be unique." };
             }
         }
     }
@@ -116,10 +110,7 @@ export async function createUser(_previousState: CreateUserState, formData: Form
     const pwdHash = await hash(passwordToHash, 12);
     const existingUser = await prisma.user.findUnique({
         where: {
-            firstName_lastName: {
-                firstName,
-                lastName,
-            },
+            firstName_lastName: { firstName, lastName },
         },
     });
 
@@ -127,20 +118,25 @@ export async function createUser(_previousState: CreateUserState, formData: Form
         return { error: existingUser.active ? "A user with that name already exists." : "A deactivated user with that name already exists. Reactivate that account instead." };
     }
 
+    await prisma.user.create({
+        data: {
+            firstName,
+            lastName,
+            type: role,
+            pwdHash,
+        },
+    });
+
     revalidatePath("/settings/accounts");
 
-    return {
-        success: `${firstName} ${lastName} was created successfully.`,
-    };
+    return { success: `${firstName} ${lastName} was created successfully.` };
 }
 
 export async function deactivateUser(userId: number): Promise<void> {
     await requireAdministrator();
 
     const user = await prisma.user.findUnique({
-        where: {
-            id: userId,
-        },
+        where: { id: userId },
         select: {
             type: true,
             active: true,
@@ -156,12 +152,8 @@ export async function deactivateUser(userId: number): Promise<void> {
     }
 
     await prisma.user.update({
-        where: {
-            id: userId,
-        },
-        data: {
-            active: false,
-        },
+        where: { id: userId },
+        data: { active: false },
     });
 
     revalidatePath("/settings/accounts");
@@ -201,15 +193,11 @@ export async function reactivateUser(userId: number, _previousState: ReactivateU
         const password = formData.get("password");
 
         if (typeof password !== "string" || password.length < 8) {
-            return {
-                error: "Managers must have a password of at least 8 characters.",
-            };
+            return { error: "Managers must have a password of at least 8 characters." };
         }
 
         if (password === standardUserPassword) {
-            return {
-                error: "Managers cannot use the standard team password.",
-            };
+            return { error: "Managers cannot use the standard team password." };
         }
 
         const privilegedUsers = await prisma.user.findMany({
@@ -217,21 +205,14 @@ export async function reactivateUser(userId: number, _previousState: ReactivateU
                 active: true,
                 type: { in: ["MANAGER", "ADMINISTRATOR"] },
             },
-            select: {
-                pwdHash: true,
-            },
+            select: { pwdHash: true },
         });
 
         for (const privilegedUser of privilegedUsers) {
-            const passwordAlreadyUsed = await compare(
-                password,
-                privilegedUser.pwdHash,
-            );
+            const passwordAlreadyUsed = await compare(password, privilegedUser.pwdHash);
 
             if (passwordAlreadyUsed) {
-                return {
-                    error: "Manager passwords must be unique.",
-                };
+                return { error: "Manager passwords must be unique." };
             }
         }
 
@@ -247,9 +228,7 @@ export async function reactivateUser(userId: number, _previousState: ReactivateU
 
     revalidatePath("/settings/accounts");
 
-    return {
-        success: `${user.firstName} ${user.lastName} was reactivated.`,
-    };
+    return { success: `${user.firstName} ${user.lastName} was reactivated.` };
 }
 
 export async function promoteUser(userId: number, _previousState: PromoteUserState, formData: FormData): Promise<PromoteUserState> {
