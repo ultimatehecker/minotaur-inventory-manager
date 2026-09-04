@@ -24,12 +24,9 @@ export default async function Projects() {
                                 <article key={project.id} className="project-card">
                                     <div className="project-card-content">
                                         <h2 className="project-card-title">{project.name}</h2>
-
                                         {project.description ? <p className="project-card-description">{project.description}</p> : null}
                                     </div>
-                                    <Link href={`/projects/${project.id}`} className="project-card-action">
-                                        View Used Parts
-                                    </Link>
+                                    <Link href={`/projects/${project.id}`} className="project-card-action">View Used Parts</Link>
                                 </article>
                             ))}
                         </div>
