@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { nullable, success, z } from "zod";
+import { z } from "zod";
 
 import { authenticate } from "@/server/session";
 import prisma from "@/prisma/prisma";
@@ -173,7 +173,7 @@ export async function relocateSubcategory(subcategoryId: number, _previousState:
         return { error: "Only subcategories can be relocated." };
     }
 
-    if (!newParent || newParent.parentId ! == null) {
+    if (!newParent || newParent.parentId !== null) {
         return { error: "The new parent must be a top-level category" };
     }
 
