@@ -8,10 +8,10 @@ import prisma from "@/prisma/prisma";
 import { authenticate } from "@/server/session";
 
 const LocationSchema = z.object({
-    name: z.string().trim().min(1, "Location name is required.").max(80, "Location name is too long.")
+    name: z.string().trim().min(1, "Location name is required.").max(80, "Location name is too long."),
 });
 
-export type LocationActionState = | { error?: string; success?: string; } | undefined;
+export type LocationActionState = { error?: string; success?: string } | undefined;
 
 async function requireInventoryManager() {
     const session = await authenticate();
@@ -31,7 +31,7 @@ export async function createStorageLocation(_previousState: LocationActionState,
     const parsed = LocationSchema.safeParse({ name: formData.get("name") });
 
     if (!parsed.success) {
-        return { error: parsed.error.issues[0] ?.message ?? "Invalid location." };
+        return { error: parsed.error.issues[0]?.message ?? "Invalid location." };
     }
 
     const { name } = parsed.data;
