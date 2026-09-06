@@ -11,7 +11,7 @@ const CreateProjectSchema = z.object({
     description: z.string().trim().max(500, "Description is too long.").optional(),
 });
 
-export type ProjectActionState = | { error?: string; success?: string; } | undefined;
+export type ProjectActionState = { error?: string; success?: string } | undefined;
 
 async function requireProjectManager() {
     const session = await authenticate();
@@ -36,7 +36,7 @@ export async function createProject(_previousState: ProjectActionState, formData
     });
 
     if (!parsed.success) {
-        return { error: parsed.error.issues[0] ?.message ?? "Invalid project information." };
+        return { error: parsed.error.issues[0]?.message ?? "Invalid project information." };
     }
 
     const { name, description } = parsed.data;

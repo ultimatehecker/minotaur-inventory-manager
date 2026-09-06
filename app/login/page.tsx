@@ -16,7 +16,9 @@ export default function Login() {
 
                 <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1.5">
-                        <label htmlFor="firstName" className="block text-base">First Name</label>
+                        <label htmlFor="firstName" className="block text-base">
+                            First Name
+                        </label>
                         <input
                             id="firstName"
                             name="firstName"
@@ -29,8 +31,10 @@ export default function Login() {
                     </div>
 
                     <div className="space-y-1.5">
-                        <label htmlFor="lastName" className="block text-base">Last Name</label>
-                        <input 
+                        <label htmlFor="lastName" className="block text-base">
+                            Last Name
+                        </label>
+                        <input
                             id="lastName"
                             name="lastName"
                             type="text"
@@ -43,8 +47,10 @@ export default function Login() {
                 </div>
 
                 <div className="space-y-1.5">
-                    <label htmlFor="password" className="block text-base">Password</label>
-                    <input 
+                    <label htmlFor="password" className="block text-base">
+                        Password
+                    </label>
+                    <input
                         id="password"
                         name="password"
                         type="password"
@@ -56,11 +62,13 @@ export default function Login() {
                 </div>
 
                 {state?.error && (
-                    <p role="alert" className="text-base text-accent">{state.error}</p>
+                    <p role="alert" className="text-base text-accent">
+                        {state.error}
+                    </p>
                 )}
 
                 <button type="submit" disabled={pending} className="w-full rounded-full bg-accent py-2.5 text-base text-fg hover:bg-accent-hover disabled:opacity-60 disabled:cursor-not-allowed transition-colors">
-                    {pending ? 'Signing In...' : 'Sign In'}
+                    {pending ? "Signing In..." : "Sign In"}
                 </button>
             </form>
         </main>

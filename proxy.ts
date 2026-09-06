@@ -14,7 +14,7 @@ async function isValidSession(token: string | undefined): Promise<boolean> {
 
     try {
         const { payload } = await jwtVerify(token, encodedKey, { algorithms: ["HS256"] });
-        const expiresAt = payload.expiresAt; 
+        const expiresAt = payload.expiresAt;
         const userId = Number(payload.userId);
 
         if (typeof expiresAt !== "string" || !Number.isInteger(userId)) return false;
@@ -22,7 +22,7 @@ async function isValidSession(token: string | undefined): Promise<boolean> {
 
         const user = await prisma.user.findUnique({
             where: { id: userId },
-            select: { active: true }
+            select: { active: true },
         });
 
         return user?.active === true;

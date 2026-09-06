@@ -49,8 +49,8 @@ const CreateUserSchema = z
     });
 
 export type CreateUserState = { error?: string; success?: string } | undefined;
-export type ReactivateUserState = | { error?: string; success?: string; } | undefined;
-export type PromoteUserState = | { error?: string; success?: string; } | undefined;
+export type ReactivateUserState = { error?: string; success?: string } | undefined;
+export type PromoteUserState = { error?: string; success?: string } | undefined;
 
 async function requireAdministrator() {
     const session = await authenticate();
@@ -319,10 +319,12 @@ async function isPrivilegedPasswordInUse(password: string, excludedUserId?: numb
     const privilegedUsers = await prisma.user.findMany({
         where: {
             active: true,
-            type: { in: ["MANAGER", "ADMINISTRATOR",] },
-            ...(excludedUserId === undefined ? {} : {
-                id: { not: excludedUserId },
-            }),
+            type: { in: ["MANAGER", "ADMINISTRATOR"] },
+            ...(excludedUserId === undefined
+                ? {}
+                : {
+                      id: { not: excludedUserId },
+                  }),
         },
         select: { pwdHash: true },
     });

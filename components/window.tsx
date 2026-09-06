@@ -29,15 +29,18 @@ export default function Window({ open, title, description, onClose, children }: 
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+            onMouseDown={(event) => {
+                if (event.target === event.currentTarget) onClose();
+            }}
+        >
             <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-lg border border-border bg-card p-5 shadow-2xl">
                 <div className="flex items-start justify-between gap-4">
                     <div>
                         <h2 className="text-lg font-semibold text-fg">{title}</h2>
 
-                        {description && (
-                            <p className="mt-1 text-sm text-fg-muted">{description}</p>
-                        )}
+                        {description && <p className="mt-1 text-sm text-fg-muted">{description}</p>}
                     </div>
 
                     <button type="button" onClick={onClose} className="rounded-md p-1 text-fg-muted transition-colors hover:bg-input hover:text-fg" aria-label="Close">

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import Navbar from "@/components/navbar";
 import { authenticate } from "@/server/session";
 
-export default async function SettingsLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
+export default async function SettingsLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     const session = await authenticate();
 
     if (!session) {

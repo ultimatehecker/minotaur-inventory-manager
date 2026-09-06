@@ -53,11 +53,15 @@ export default async function InventoryCategoryPage({ params }: InventoryCategor
             <main className="min-h-[calc(100vh-64px)] w-full px-4 py-10 font-bricolage sm:px-8">
                 <div className="mx-auto max-w-6xl">
                     <div className="mb-8 flex items-center gap-2 text-sm text-fg-muted">
-                        <Link href="/inventory" className="transition-colors hover:text-fg">Inventory</Link>
+                        <Link href="/inventory" className="transition-colors hover:text-fg">
+                            Inventory
+                        </Link>
                         {category.parent ? (
                             <>
                                 <span>/</span>
-                                <Link href={`/inventory/${category.parent.id}`} className="transition-colors hover:text-fg">{category.parent.name}</Link>
+                                <Link href={`/inventory/${category.parent.id}`} className="transition-colors hover:text-fg">
+                                    {category.parent.name}
+                                </Link>
                             </>
                         ) : null}
 
@@ -99,9 +103,7 @@ export default async function InventoryCategoryPage({ params }: InventoryCategor
                                         <th className="px-4 py-3 font-semibold">Total</th>
                                         <th className="px-4 py-3 font-semibold">Used</th>
                                         <th className="px-4 py-3 font-semibold">Available</th>
-                                        {canManageInventory && (
-                                            <th className="px-4 py-3 text-right font-semibold">Actions</th>
-                                        )}
+                                        {canManageInventory && <th className="px-4 py-3 text-right font-semibold">Actions</th>}
                                     </tr>
                                 </thead>
 

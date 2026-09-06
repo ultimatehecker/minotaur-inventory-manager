@@ -23,8 +23,8 @@ const CreateCategorySchema = z
         }
     });
 
-export type CategoryActionState = | { error?: string; success?: string; } | undefined;
-export type CategoryBulkActionState = | { error?: string; success?: string } | undefined;
+export type CategoryActionState = { error?: string; success?: string } | undefined;
+export type CategoryBulkActionState = { error?: string; success?: string } | undefined;
 
 async function requireInventoryManager() {
     const session = await authenticate();
@@ -155,8 +155,8 @@ export async function relocateSubcategory(subcategoryId: number, _previousState:
             select: {
                 id: true,
                 name: true,
-                parentId: true
-            }
+                parentId: true,
+            },
         }),
 
         prisma.category.findUnique({
@@ -164,9 +164,9 @@ export async function relocateSubcategory(subcategoryId: number, _previousState:
             select: {
                 id: true,
                 name: true,
-                parentId: true
-            }
-        })
+                parentId: true,
+            },
+        }),
     ]);
 
     if (!subcategory || subcategory.parentId === null) {
@@ -183,7 +183,7 @@ export async function relocateSubcategory(subcategoryId: number, _previousState:
 
     await prisma.category.update({
         where: { id: subcategory.id },
-        data: { parentId: newParent.id }
+        data: { parentId: newParent.id },
     });
 
     revalidateInventoryPaths();
@@ -209,8 +209,8 @@ export async function moveAllItems(sourceSubcategoryId: number, _previousState: 
             select: {
                 id: true,
                 name: true,
-                parentId: true
-            }
+                parentId: true,
+            },
         }),
 
         prisma.category.findUnique({
@@ -218,9 +218,9 @@ export async function moveAllItems(sourceSubcategoryId: number, _previousState: 
             select: {
                 id: true,
                 name: true,
-                parentId: true
-            }
-        })
+                parentId: true,
+            },
+        }),
     ]);
 
     if (!source || source.parentId === null) {
@@ -233,18 +233,17 @@ export async function moveAllItems(sourceSubcategoryId: number, _previousState: 
 
     const result = await prisma.item.updateMany({
         where: { categoryId: source.id },
-        data: { categoryId: target.id }
+        data: { categoryId: target.id },
     });
 
     revalidateInventoryPaths();
 
     return {
-        success: result.count === 0
-            ? `${source.name} did not contain any parts to move.`
-            : `${result.count} ${result.count === 1 ? "part was" : "parts were"} moved from ${source.name} to ${target.name}.`,
+        success: result.count === 0 ? `${source.name} did not contain any parts to move.` : `${result.count} ${result.count === 1 ? "part was" : "parts were"} moved from ${source.name} to ${target.name}.`,
     };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function deleteAllItems(sourceSubcategoryId: number, _previousState: CategoryBulkActionState, _formData: FormData): Promise<CategoryBulkActionState> {
     await requireInventoryManager();
 
@@ -255,9 +254,9 @@ export async function deleteAllItems(sourceSubcategoryId: number, _previousState
             name: true,
             parentId: true,
             _count: {
-                select: { items: true }
-            }
-        }
+                select: { items: true },
+            },
+        },
     });
 
     if (!source || source.parentId === null) {
@@ -269,11 +268,11 @@ export async function deleteAllItems(sourceSubcategoryId: number, _previousState
     }
 
     const itemWithProjectHistory = await prisma.item.findFirst({
-        where: { 
-            categoryId: source.id ,
-            checkouts: { some: {} }
+        where: {
+            categoryId: source.id,
+            checkouts: { some: {} },
         },
-        select: { id: true }
+        select: { id: true },
     });
 
     if (itemWithProjectHistory) {
@@ -281,7 +280,7 @@ export async function deleteAllItems(sourceSubcategoryId: number, _previousState
     }
 
     const result = await prisma.item.deleteMany({
-        where: { categoryId: source.id }
+        where: { categoryId: source.id },
     });
 
     revalidateInventoryPaths();

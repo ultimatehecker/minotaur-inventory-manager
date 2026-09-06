@@ -6,11 +6,11 @@ import { createUser, deactivateUser, reactivateUser, promoteUser, demoteUser, ty
 import ActionMenu, { actionMenuItemCSS, dangerousActionMenuItemCSS } from "@/components/action-menu";
 import Window from "@/components/window";
 
-type DeleteUserButtonProps = { userId: number; userName: string; };
+type DeleteUserButtonProps = { userId: number; userName: string };
 type ReactivateUserControlProps = { userId: number; userName: string; userRole: "STANDARD" | "MANAGER" | "ADMINISTRATOR" };
 type PromoteUserControlProps = { userId: number };
 type DemoteUserButtonProps = { userId: number; userName: string };
-type UserActionsMenuProps = { userId: number; userName: string; userRole: | "STANDARD" | "MANAGER" | "ADMINISTRATOR" };
+type UserActionsMenuProps = { userId: number; userName: string; userRole: "STANDARD" | "MANAGER" | "ADMINISTRATOR" };
 
 export function CreateUserForm() {
     const [role, setRole] = useState<"STANDARD" | "MANAGER">("STANDARD");
@@ -20,7 +20,9 @@ export function CreateUserForm() {
         <form action={formAction} className="mt-6 space-y-5">
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label htmlFor="firstName" className="block text-sm font-medium text-fg">First Name</label>
+                    <label htmlFor="firstName" className="block text-sm font-medium text-fg">
+                        First Name
+                    </label>
                     <input
                         id="firstName"
                         name="firstName"
@@ -31,7 +33,9 @@ export function CreateUserForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="lastName" className="block text-sm font-medium text-fg">Last Name</label>
+                    <label htmlFor="lastName" className="block text-sm font-medium text-fg">
+                        Last Name
+                    </label>
                     <input
                         id="lastName"
                         name="lastName"
@@ -43,7 +47,9 @@ export function CreateUserForm() {
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="role" className="block text-sm font-medium text-fg">Account Level</label>
+                <label htmlFor="role" className="block text-sm font-medium text-fg">
+                    Account Level
+                </label>
                 <select
                     id="role"
                     name="role"
@@ -58,7 +64,9 @@ export function CreateUserForm() {
 
             {role === "MANAGER" ? (
                 <div className="space-y-2">
-                    <label htmlFor="password" className="block text-sm font-medium text-fg">Custom Password</label>
+                    <label htmlFor="password" className="block text-sm font-medium text-fg">
+                        Custom Password
+                    </label>
                     <input
                         id="password"
                         name="password"
@@ -97,12 +105,14 @@ export function DeactivateUserButton({ userId, userName }: DeleteUserButtonProps
                 }
             }}
         >
-            <button type="submit" className="rounded-md border border-accent/50 px-3 py-1.5 text-sm text-accent transition-colors hover:border-accent hover:bg-accent/10">Deactivate</button>
+            <button type="submit" className="rounded-md border border-accent/50 px-3 py-1.5 text-sm text-accent transition-colors hover:border-accent hover:bg-accent/10">
+                Deactivate
+            </button>
         </form>
     );
 }
 
-export function ReactivateUserControl({userId, userRole}: ReactivateUserControlProps) {
+export function ReactivateUserControl({ userId, userRole }: ReactivateUserControlProps) {
     const reactivateAction = reactivateUser.bind(null, userId);
     const [state, formAction, pending] = useActionState<ReactivateUserState, FormData>(reactivateAction, undefined);
 
@@ -132,13 +142,9 @@ export function ReactivateUserControl({userId, userRole}: ReactivateUserControlP
                 {pending ? "Reactivating..." : "Reactivate"}
             </button>
 
-            {state?.error && (
-                <p className="max-w-64 text-right text-xs text-accent">{state.error}</p>
-            )}
+            {state?.error && <p className="max-w-64 text-right text-xs text-accent">{state.error}</p>}
 
-            {state?.success && (
-                <p className="max-w-64 text-right text-xs text-fg-muted">{state.success}</p>
-            )}
+            {state?.success && <p className="max-w-64 text-right text-xs text-fg-muted">{state.success}</p>}
         </form>
     );
 }
@@ -168,19 +174,15 @@ export function PromoteUserControl({ userId }: PromoteUserControlProps) {
                 {pending ? "Promoting..." : "Promote"}
             </button>
 
-            {state?.error && (
-                <p className="max-w-64 text-right text-xs text-accent">{state.error}</p>
-            )}
+            {state?.error && <p className="max-w-64 text-right text-xs text-accent">{state.error}</p>}
 
-            {state?.success && (
-                <p className="max-w-64 text-right text-xs text-fg-muted">{state.success}</p>
-            )}
+            {state?.success && <p className="max-w-64 text-right text-xs text-fg-muted">{state.success}</p>}
         </form>
     );
 }
 
 export function DemoteUserButton({ userId, userName }: DemoteUserButtonProps) {
-    const demoteAction = demoteUser.bind( null, userId );
+    const demoteAction = demoteUser.bind(null, userId);
 
     return (
         <form
@@ -211,7 +213,9 @@ export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuP
         <>
             <ActionMenu>
                 {userRole === "STANDARD" && (
-                    <button type="button" onClick={() => setPromoteOpen(true)} className={actionMenuItemCSS}>Promote to Manager</button>
+                    <button type="button" onClick={() => setPromoteOpen(true)} className={actionMenuItemCSS}>
+                        Promote to Manager
+                    </button>
                 )}
 
                 {userRole === "MANAGER" && (
@@ -223,7 +227,9 @@ export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuP
                             }
                         }}
                     >
-                        <button type="submit" className={actionMenuItemCSS}>Demote to Standard</button>
+                        <button type="submit" className={actionMenuItemCSS}>
+                            Demote to Standard
+                        </button>
                     </form>
                 )}
 
@@ -235,12 +241,14 @@ export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuP
                         }
                     }}
                 >
-                    <button type="submit" className={dangerousActionMenuItemCSS}>Deactivate</button>
+                    <button type="submit" className={dangerousActionMenuItemCSS}>
+                        Deactivate
+                    </button>
                 </form>
             </ActionMenu>
 
             <Window open={promoteOpen} onClose={() => setPromoteOpen(false)} title="Promote to Manager" description={`Set a unique password for ${userName}.`}>
-                <form 
+                <form
                     onSubmit={(event) => {
                         event.preventDefault();
                         const formData = new FormData(event.currentTarget);
@@ -249,9 +257,7 @@ export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuP
                             const result = await promoteUser(userId, undefined, formData);
 
                             if (result?.error) {
-                                setPromoteError(
-                                    result.error,
-                                );
+                                setPromoteError(result.error);
 
                                 return;
                             }
@@ -264,7 +270,9 @@ export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuP
                     className="space-y-4"
                 >
                     <div className="space-y-2">
-                        <label htmlFor={`promote-password-${userId}`} className="block text-sm font-medium text-fg">Manager Password</label>
+                        <label htmlFor={`promote-password-${userId}`} className="block text-sm font-medium text-fg">
+                            Manager Password
+                        </label>
                         <input
                             id={`promote-password-${userId}`}
                             name="password"
@@ -278,13 +286,15 @@ export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuP
                         />
                     </div>
 
-                    {promoteError && (
-                        <p className="text-sm text-accent">{promoteError}</p>
-                    )}
+                    {promoteError && <p className="text-sm text-accent">{promoteError}</p>}
 
                     <div className="flex justify-end gap-2">
-                        <button type="button" onClick={() => setPromoteOpen(false)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted hover:text-fg">Cancel</button>
-                        <button type="submit" disabled={promoting} className="rounded-md bg-accent px-4 py-2 text-sm text-white hover:bg-accent-hover disabled:opacity-60">{promoting ? "Promoting..." : "Promote"}</button>
+                        <button type="button" onClick={() => setPromoteOpen(false)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted hover:text-fg">
+                            Cancel
+                        </button>
+                        <button type="submit" disabled={promoting} className="rounded-md bg-accent px-4 py-2 text-sm text-white hover:bg-accent-hover disabled:opacity-60">
+                            {promoting ? "Promoting..." : "Promote"}
+                        </button>
                     </div>
                 </form>
             </Window>

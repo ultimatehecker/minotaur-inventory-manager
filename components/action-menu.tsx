@@ -52,5 +52,5 @@ export default function ActionMenu({ children }: ActionMenuProps) {
     );
 }
 
-export const actionMenuItemCSS ="flex w-full items-center rounded px-3 py-2 text-left text-sm text-fg-muted transition-colors hover:bg-input hover:text-fg disabled:cursor-not-allowed disabled:opacity-40";
+export const actionMenuItemCSS = "flex w-full items-center rounded px-3 py-2 text-left text-sm text-fg-muted transition-colors hover:bg-input hover:text-fg disabled:cursor-not-allowed disabled:opacity-40";
 export const dangerousActionMenuItemCSS = "flex w-full items-center rounded px-3 py-2 text-left text-sm text-accent transition-colors hover:bg-accent/10 disabled:cursor-not-allowed disabled:opacity-40";

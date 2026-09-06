@@ -61,8 +61,7 @@ export default async function InventorySettings() {
                 <div>
                     <h3 className="text-lg font-semibold text-fg">Existing Categories</h3>
                     <p className="mt-1 text-sm text-fg-muted">
-                        {categories.length} top-level{" "}
-                        {categories.length === 1 ? "category" : "categories"}
+                        {categories.length} top-level {categories.length === 1 ? "category" : "categories"}
                     </p>
                 </div>
 
@@ -80,8 +79,7 @@ export default async function InventorySettings() {
                                         </div>
 
                                         <p className="mt-1 text-xs text-fg-dim">
-                                            {category._count.children}{" "}
-                                            {category._count.children === 1 ? "subcategory" : "subcategories"}
+                                            {category._count.children} {category._count.children === 1 ? "subcategory" : "subcategories"}
                                         </p>
                                     </div>
 
@@ -97,10 +95,19 @@ export default async function InventorySettings() {
                                                         <p className="text-sm text-fg">{subcategory.name}</p>
                                                         <span className="rounded-full border border-border px-2.5 py-0.5 text-xs text-fg-muted">Subcategory</span>
                                                     </div>
-                                                    <p className="mt-1 text-xs text-fg-dim">{subcategory._count.items}{" "}{subcategory._count.items === 1 ? "item" : "items"}</p>
+                                                    <p className="mt-1 text-xs text-fg-dim">
+                                                        {subcategory._count.items} {subcategory._count.items === 1 ? "item" : "items"}
+                                                    </p>
                                                 </div>
 
-                                                <SubcategoryActionsMenu subcategoryId={subcategory.id} subcategoryName={subcategory.name} currentParentId={category.id} itemCount={subcategory._count.items} parentCategories={parentCategories} subcategories={subcategories} />
+                                                <SubcategoryActionsMenu
+                                                    subcategoryId={subcategory.id}
+                                                    subcategoryName={subcategory.name}
+                                                    currentParentId={category.id}
+                                                    itemCount={subcategory._count.items}
+                                                    parentCategories={parentCategories}
+                                                    subcategories={subcategories}
+                                                />
                                             </div>
                                         ))}
                                     </div>

@@ -5,9 +5,9 @@ import { createCategory, deleteAllItems, deleteCategory, moveAllItems, relocateS
 import ActionMenu, { actionMenuItemCSS, dangerousActionMenuItemCSS } from "@/components/action-menu";
 import Window from "@/components/window";
 
-type ParentCategory = { id: number; name: string; };
-type CreateCategoryFormProps = { parentCategories: ParentCategory[]; };
-type DeleteCategoryButtonProps = { categoryId: number; categoryName: string; disabled?: boolean; };
+type ParentCategory = { id: number; name: string };
+type CreateCategoryFormProps = { parentCategories: ParentCategory[] };
+type DeleteCategoryButtonProps = { categoryId: number; categoryName: string; disabled?: boolean };
 type SubcategoryOption = { id: number; name: string; parentName: string };
 type SubcategoryManagementControlsProps = {
     subcategoryId: number;
@@ -18,14 +18,16 @@ type SubcategoryManagementControlsProps = {
     subcategories: SubcategoryOption[];
 };
 
-export function CreateCategoryForm({parentCategories}: CreateCategoryFormProps) {
+export function CreateCategoryForm({ parentCategories }: CreateCategoryFormProps) {
     const [level, setLevel] = useState<"CATEGORY" | "SUBCATEGORY">("CATEGORY");
     const [state, formAction, pending] = useActionState<CategoryActionState, FormData>(createCategory, undefined);
 
     return (
         <form action={formAction} className="mt-6 space-y-5">
             <div className="space-y-2">
-                <label htmlFor="name" className="block text-sm font-medium text-fg">Name</label>
+                <label htmlFor="name" className="block text-sm font-medium text-fg">
+                    Name
+                </label>
                 <input
                     id="name"
                     name="name"
@@ -37,13 +39,15 @@ export function CreateCategoryForm({parentCategories}: CreateCategoryFormProps) 
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="level" className="block text-sm font-medium text-fg">Type</label>
+                <label htmlFor="level" className="block text-sm font-medium text-fg">
+                    Type
+                </label>
 
                 <select
                     id="level"
                     name="level"
                     value={level}
-                    onChange={(event) => setLevel(event.currentTarget.value as | "CATEGORY" | "SUBCATEGORY")}
+                    onChange={(event) => setLevel(event.currentTarget.value as "CATEGORY" | "SUBCATEGORY")}
                     className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg outline-none focus:border-border-focus"
                 >
                     <option value="CATEGORY">Category</option>
@@ -53,19 +57,19 @@ export function CreateCategoryForm({parentCategories}: CreateCategoryFormProps) 
 
             {level === "SUBCATEGORY" && (
                 <div className="space-y-2">
-                    <label htmlFor="parentId" className="block text-sm font-medium text-fg">Parent Category</label>
+                    <label htmlFor="parentId" className="block text-sm font-medium text-fg">
+                        Parent Category
+                    </label>
 
-                    <select
-                        id="parentId"
-                        name="parentId"
-                        required
-                        defaultValue=""
-                        className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg outline-none focus:border-border-focus"
-                    >
-                        <option value="" disabled>Select a category</option>
+                    <select id="parentId" name="parentId" required defaultValue="" className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg outline-none focus:border-border-focus">
+                        <option value="" disabled>
+                            Select a category
+                        </option>
 
                         {parentCategories.map((category) => (
-                            <option key={category.id} value={category.id}>{category.name}</option>
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
                         ))}
                     </select>
 
@@ -74,12 +78,12 @@ export function CreateCategoryForm({parentCategories}: CreateCategoryFormProps) 
             )}
 
             {state?.error && (
-                <p role="alert" className="text-sm text-accent">{state.error}</p>
+                <p role="alert" className="text-sm text-accent">
+                    {state.error}
+                </p>
             )}
 
-            {state?.success && (
-                <p className="text-sm text-fg-muted">{state.success}</p>
-            )}
+            {state?.success && <p className="text-sm text-fg-muted">{state.success}</p>}
 
             <button type="submit" disabled={pending} className="rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60">
                 {pending ? "Creating..." : "Create Category"}
@@ -88,13 +92,11 @@ export function CreateCategoryForm({parentCategories}: CreateCategoryFormProps) 
     );
 }
 
-export function DeleteCategoryButton({categoryId, categoryName, disabled = false }: DeleteCategoryButtonProps) {
+export function DeleteCategoryButton({ categoryId, categoryName, disabled = false }: DeleteCategoryButtonProps) {
     const deleteAction = deleteCategory.bind(null, categoryId);
 
     if (disabled) {
-        return (
-            <span className="text-xs text-fg-dim">Not Empty</span>
-        );
+        return <span className="text-xs text-fg-dim">Not Empty</span>;
     }
 
     return (
@@ -116,7 +118,7 @@ export function DeleteCategoryButton({categoryId, categoryName, disabled = false
 }
 
 export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, currentParentId, itemCount, parentCategories, subcategories }: SubcategoryManagementControlsProps) {
-    const [modal, setModal] = useState< | "relocate" | "move" | "deleteParts" | null>(null);
+    const [modal, setModal] = useState<"relocate" | "move" | "deleteParts" | null>(null);
     const deleteCategoryAction = deleteCategory.bind(null, subcategoryId);
     const otherParents = parentCategories.filter((category) => category.id !== currentParentId);
     const otherSubcategories = subcategories.filter((subcategory) => subcategory.id !== subcategoryId);
@@ -130,9 +132,15 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
     return (
         <>
             <ActionMenu>
-                <button type="button" className={actionMenuItemCSS} onClick={() => setModal("relocate")}>Relocate</button>
-                <button type="button" disabled={itemCount === 0} className={actionMenuItemCSS} onClick={() => setModal("move")}>Move All Parts</button>
-                <button type="button" disabled={itemCount === 0} className={dangerousActionMenuItemCSS} onClick={() => setModal("deleteParts")}>Delete All Parts</button>
+                <button type="button" className={actionMenuItemCSS} onClick={() => setModal("relocate")}>
+                    Relocate
+                </button>
+                <button type="button" disabled={itemCount === 0} className={actionMenuItemCSS} onClick={() => setModal("move")}>
+                    Move All Parts
+                </button>
+                <button type="button" disabled={itemCount === 0} className={dangerousActionMenuItemCSS} onClick={() => setModal("deleteParts")}>
+                    Delete All Parts
+                </button>
 
                 <form
                     action={deleteCategoryAction}
@@ -142,12 +150,14 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
                         }
                     }}
                 >
-                    <button type="submit" disabled={itemCount > 0} className={dangerousActionMenuItemCSS}>Delete Subcategory</button>
+                    <button type="submit" disabled={itemCount > 0} className={dangerousActionMenuItemCSS}>
+                        Delete Subcategory
+                    </button>
                 </form>
             </ActionMenu>
 
             <Window open={modal === "relocate"} onClose={() => setModal(null)} title="Relocate Subcategory" description={`Move ${subcategoryName} under another parent category.`}>
-                <form 
+                <form
                     onSubmit={(event) => {
                         event.preventDefault();
                         const formData = new FormData(event.currentTarget);
@@ -156,9 +166,7 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
                             const result = await relocateSubcategory(subcategoryId, undefined, formData);
 
                             if (result?.error) {
-                                setRelocateError(
-                                    result.error,
-                                );
+                                setRelocateError(result.error);
 
                                 return;
                             }
@@ -170,27 +178,32 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
                     className="space-y-4"
                 >
                     <select name="parentId" required defaultValue="" className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg outline-none focus:border-border-focus">
-                        <option value="" disabled>Select category</option>
+                        <option value="" disabled>
+                            Select category
+                        </option>
 
                         {otherParents.map((category) => (
-                            <option key={category.id} value={category.id}>{category.name}</option>
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
                         ))}
                     </select>
 
-                    {relocateError && (
-                        <p className="text-sm text-accent">{relocateError}</p>
-                    )}
+                    {relocateError && <p className="text-sm text-accent">{relocateError}</p>}
 
                     <div className="flex justify-end gap-2">
-                        <button type="button" onClick={() => setModal(null)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">Cancel</button>
-                        <button disabled={relocating} className="rounded-md bg-accent px-4 py-2 text-sm text-white">Relocate
+                        <button type="button" onClick={() => setModal(null)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">
+                            Cancel
+                        </button>
+                        <button disabled={relocating} className="rounded-md bg-accent px-4 py-2 text-sm text-white">
+                            Relocate
                         </button>
                     </div>
                 </form>
             </Window>
 
             <Window open={modal === "move"} onClose={() => setModal(null)} title="Move All Parts" description={`Move every part currently stored in ${subcategoryName}.`}>
-                <form 
+                <form
                     onSubmit={(event) => {
                         event.preventDefault();
                         const formData = new FormData(event.currentTarget);
@@ -199,9 +212,7 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
                             const result = await moveAllItems(subcategoryId, undefined, formData);
 
                             if (result?.error) {
-                                setMoveError(
-                                    result.error,
-                                );
+                                setMoveError(result.error);
 
                                 return;
                             }
@@ -213,26 +224,32 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
                     className="space-y-4"
                 >
                     <select name="targetCategoryId" required defaultValue="" className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg outline-none focus:border-border-focus">
-                        <option value="" disabled>Select destination</option>
+                        <option value="" disabled>
+                            Select destination
+                        </option>
 
                         {otherSubcategories.map((subcategory) => (
-                            <option key={subcategory.id} value={subcategory.id}>{subcategory.parentName}{" "}/{" "}{subcategory.name}</option>
+                            <option key={subcategory.id} value={subcategory.id}>
+                                {subcategory.parentName} / {subcategory.name}
+                            </option>
                         ))}
                     </select>
 
-                    {moveError && (
-                        <p className="text-sm text-accent">{moveError}</p>
-                    )}
+                    {moveError && <p className="text-sm text-accent">{moveError}</p>}
 
                     <div className="flex justify-end gap-2">
-                        <button type="button" onClick={() => setModal(null)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">Cancel</button>
-                        <button disabled={moving} className="rounded-md bg-accent px-4 py-2 text-sm text-white">Move Parts</button>
+                        <button type="button" onClick={() => setModal(null)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">
+                            Cancel
+                        </button>
+                        <button disabled={moving} className="rounded-md bg-accent px-4 py-2 text-sm text-white">
+                            Move Parts
+                        </button>
                     </div>
                 </form>
             </Window>
 
             <Window open={modal === "deleteParts"} onClose={() => setModal(null)} title="Delete All Parts" description={`Permanently delete all ${itemCount} parts from ${subcategoryName}.`}>
-                <form 
+                <form
                     onSubmit={(event) => {
                         event.preventDefault();
                         const formData = new FormData(event.currentTarget);
@@ -241,9 +258,7 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
                             const result = await deleteAllItems(subcategoryId, undefined, formData);
 
                             if (result?.error) {
-                                setDeleteError(
-                                    result.error,
-                                );
+                                setDeleteError(result.error);
 
                                 return;
                             }
@@ -254,14 +269,16 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
                     }}
                     className="space-y-4"
                 >
-                    {deleteError && (
-                        <p className="text-sm text-accent">{deleteError}</p>
-                    )}
+                    {deleteError && <p className="text-sm text-accent">{deleteError}</p>}
 
                     <p className="text-sm text-fg-muted">This cannot be undone. Parts with project history cannot be deleted.</p>
                     <div className="flex justify-end gap-2">
-                        <button type="button" onClick={() => setModal(null)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">Cancel</button>
-                        <button disabled={deleting} className="rounded-md border border-accent/50 px-4 py-2 text-sm text-accent hover:bg-accent/10">Delete All Parts</button>
+                        <button type="button" onClick={() => setModal(null)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">
+                            Cancel
+                        </button>
+                        <button disabled={deleting} className="rounded-md border border-accent/50 px-4 py-2 text-sm text-accent hover:bg-accent/10">
+                            Delete All Parts
+                        </button>
                     </div>
                 </form>
             </Window>
