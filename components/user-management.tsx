@@ -3,6 +3,15 @@
 import { useActionState, useState } from "react";
 import { createUser, deactivateUser, reactivateUser, promoteUser, demoteUser, type CreateUserState, type ReactivateUserState, type PromoteUserState } from "@/server/users";
 
+import ActionMenu, { actionMenuItemCSS, dangerousActionMenuItemCSS } from "@/components/action-menu";
+import Window from "@/components/window";
+
+type DeleteUserButtonProps = { userId: number; userName: string; };
+type ReactivateUserControlProps = { userId: number; userName: string; userRole: "STANDARD" | "MANAGER" | "ADMINISTRATOR" };
+type PromoteUserControlProps = { userId: number };
+type DemoteUserButtonProps = { userId: number; userName: string };
+type UserActionsMenuProps = { userId: number; userName: string; userRole: | "STANDARD" | "MANAGER" | "ADMINISTRATOR" };
+
 export function CreateUserForm() {
     const [role, setRole] = useState<"STANDARD" | "MANAGER">("STANDARD");
     const [state, formAction, pending] = useActionState<CreateUserState, FormData>(createUser, undefined);
@@ -76,8 +85,6 @@ export function CreateUserForm() {
     );
 }
 
-type DeleteUserButtonProps = { userId: number; userName: string; };
-
 export function DeactivateUserButton({ userId, userName }: DeleteUserButtonProps) {
     const deleteAction = deactivateUser.bind(null, userId);
 
@@ -94,8 +101,6 @@ export function DeactivateUserButton({ userId, userName }: DeleteUserButtonProps
         </form>
     );
 }
-
-type ReactivateUserControlProps = { userId: number; userName: string; userRole: "STANDARD" | "MANAGER" | "ADMINISTRATOR" };
 
 export function ReactivateUserControl({userId, userRole}: ReactivateUserControlProps) {
     const reactivateAction = reactivateUser.bind(null, userId);
@@ -138,9 +143,6 @@ export function ReactivateUserControl({userId, userRole}: ReactivateUserControlP
     );
 }
 
-
-type PromoteUserControlProps = { userId: number };
-
 export function PromoteUserControl({ userId }: PromoteUserControlProps) {
     const promoteAction = promoteUser.bind(null, userId);
     const [state, formAction, pending] = useActionState<PromoteUserState, FormData>(promoteAction, undefined);
@@ -177,8 +179,6 @@ export function PromoteUserControl({ userId }: PromoteUserControlProps) {
     );
 }
 
-type DemoteUserButtonProps = { userId: number; userName: string };
-
 export function DemoteUserButton({ userId, userName }: DemoteUserButtonProps) {
     const demoteAction = demoteUser.bind( null, userId );
 
@@ -195,5 +195,77 @@ export function DemoteUserButton({ userId, userName }: DemoteUserButtonProps) {
                 Demote
             </button>
         </form>
+    );
+}
+
+export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuProps) {
+    const [promoteOpen, setPromoteOpen] = useState(false);
+    const promoteAction = promoteUser.bind(null, userId);
+    const demoteAction = demoteUser.bind(null, userId);
+    const deactivateAction = deactivateUser.bind(null, userId);
+    const [promoteState, promoteFormAction, promoting] = useActionState<PromoteUserState, FormData>(promoteAction, undefined);
+
+    if (userRole === "ADMINISTRATOR") return null;
+
+    return (
+        <>
+            <ActionMenu>
+                {userRole === "STANDARD" && (
+                    <button type="button" onClick={() => setPromoteOpen(true)} className={actionMenuItemCSS}>Promote to Manager</button>
+                )}
+
+                {userRole === "MANAGER" && (
+                    <form
+                        action={demoteAction}
+                        onSubmit={(event) => {
+                            if (!window.confirm(`Demote ${userName} to Standard? Their password will be reset to the team password.`)) {
+                                event.preventDefault();
+                            }
+                        }}
+                    >
+                        <button type="submit" className={actionMenuItemCSS}>Demote to Standard</button>
+                    </form>
+                )}
+
+                <form
+                    action={deactivateAction}
+                    onSubmit={(event) => {
+                        if (!window.confirm(`Deactivate ${userName}?`)) {
+                            event.preventDefault();
+                        }
+                    }}
+                >
+                    <button type="submit" className={dangerousActionMenuItemCSS}>Deactivate</button>
+                </form>
+            </ActionMenu>
+
+            <Window open={promoteOpen} onClose={() => setPromoteOpen(false)} title="Promote to Manager" description={`Set a unique password for ${userName}.`}>
+                <form action={promoteFormAction} className="space-y-4">
+                    <div className="space-y-2">
+                        <label htmlFor={`promote-password-${userId}`} className="block text-sm font-medium text-fg">Manager Password</label>
+                        <input
+                            id={`promote-password-${userId}`}
+                            name="password"
+                            type="password"
+                            required
+                            minLength={8}
+                            maxLength={100}
+                            autoComplete="new-password"
+                            placeholder="Enter a unique password"
+                            className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg outline-non focus:border-border-focus"
+                        />
+                    </div>
+
+                    {promoteState?.error && (
+                        <p className="text-sm text-accent">{promoteState.error}</p>
+                    )}
+
+                    <div className="flex justify-end gap-2">
+                        <button type="button" onClick={() => setPromoteOpen(false)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted hover:text-fg">Cancel</button>
+                        <button type="submit" disabled={promoting} className="rounded-md bg-accent px-4 py-2 text-sm text-white hover:bg-accent-hover disabled:opacity-60">{promoting ? "Promoting..." : "Promote"}</button>
+                    </div>
+                </form>
+            </Window>
+        </>
     );
 }
