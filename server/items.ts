@@ -24,6 +24,7 @@ const CreateItemSchema =
     });
 
 export type CreateItemState = | { error?: string; } | undefined;
+export type DeleteItemState = | { error?: string; success?: string; } | undefined;
 
 async function requireInventoryManager() {
     const session = await authenticate();
@@ -94,4 +95,39 @@ export async function createItem(categoryId: number, _previousState: CreateItemS
     revalidatePath(`/inventory/${categoryId}`);
     revalidatePath("/inventory");
     redirect(`/inventory/${categoryId}`);
+}
+
+export async function deleteItem(itemId: number, categoryId: number, _previousState: DeleteItemState, _formData: FormData): Promise<DeleteItemState> {
+    await requireInventoryManager();
+
+    const item =
+        await prisma.item.findUnique({
+            where: { id: itemId },
+            select: {
+                id: true,
+                name: true,
+                categoryId: true,
+                _count: {
+                    select: { checkouts: true },
+                },
+            },
+        });
+
+    if (!item || item.categoryId !== categoryId) {
+        return { error: "This part does not exist in this subcategory." };
+    }
+
+    if (item._count.checkouts > 0) {
+        return { error: "This part cannot be deleted because it has project history." };
+    }
+
+    await prisma.item.delete({
+        where: { id: item.id },
+    });
+
+    revalidatePath(`/inventory/${categoryId}`);
+    revalidatePath("/inventory");
+    revalidatePath("/settings/inventory");
+
+    return { success: `${item.name} was deleted.` };
 }

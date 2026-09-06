@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Navbar from "@/components/navbar";
 import prisma from "@/prisma/prisma";
 
-import { AddItemButton } from "@/components/item-management";
+import { AddItemButton, ItemActionsMenu } from "@/components/item-management";
 import { authenticate } from "@/server/session";
 
 type InventoryCategoryPageProps = { params: Promise<{ id: string }> };
@@ -99,6 +99,9 @@ export default async function InventoryCategoryPage({ params }: InventoryCategor
                                         <th className="px-4 py-3 font-semibold">Total</th>
                                         <th className="px-4 py-3 font-semibold">Used</th>
                                         <th className="px-4 py-3 font-semibold">Available</th>
+                                        {canManageInventory && (
+                                            <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                                        )}
                                     </tr>
                                 </thead>
 
@@ -120,6 +123,11 @@ export default async function InventoryCategoryPage({ params }: InventoryCategor
                                                 <td className="px-4 py-3 text-fg-muted">{item.quantity}</td>
                                                 <td className="px-4 py-3 text-fg-muted">{checkedOut}</td>
                                                 <td className="px-4 py-3 font-semibold text-fg">{available}</td>
+                                                {canManageInventory && (
+                                                    <td className="px-4 py-3 text-right">
+                                                        <ItemActionsMenu itemId={item.id} itemName={item.name} categoryId={category.id} />
+                                                    </td>
+                                                )}
                                             </tr>
                                         );
                                     })}
