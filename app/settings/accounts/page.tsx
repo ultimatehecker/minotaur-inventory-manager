@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { CreateUserForm, DeactivateUserButton, ReactivateUserControl } from "@/components/user-management";
+import { CreateUserForm, DeactivateUserButton, ReactivateUserControl, UserActionsMenu } from "@/components/user-management";
 import { authenticate } from "@/server/session";
 import prisma from "@/prisma/prisma";
 
@@ -93,7 +93,11 @@ export default async function AccountsSettings() {
                                     <p className="mt-1 text-xs text-fg-dim">Created {user.createdAt.toLocaleDateString()}</p>
                                 </div>
 
-                                {user.type === "ADMINISTRATOR" ? <span className="text-xs text-fg-dim">Protected</span> : <DeactivateUserButton userId={user.id} userName={fullName} />}
+                                {user.type === "ADMINISTRATOR" ? (
+                                    <span className="text-xs text-fg-dim">Protected</span>
+                                ) : (
+                                    <UserActionsMenu userId={user.id} userName={fullName} userRole={user.type} />
+                                )}
                             </div>
                         );
                     })}
@@ -101,11 +105,7 @@ export default async function AccountsSettings() {
             </section>
             <section className="py-8">
                 <h3 className="text-lg font-semibold text-fg">Deactivated Users</h3>
-                <p className="mt-1 text-sm text-fg-muted">
-                    {" "}
-                    {deactivatedUsers.length} active {deactivatedUsers.length === 1 ? "account" : "accounts"}{" "}
-                </p>
-
+                <p className="mt-1 text-sm text-fg-muted">{" "}{deactivatedUsers.length} deactivated {deactivatedUsers.length === 1 ? "account" : "accounts"}{" "}</p>
                 <div className="mt-6">
                     {deactivatedUsers.map((user) => {
                         const fullName = `${user.firstName} ${user.lastName}`;

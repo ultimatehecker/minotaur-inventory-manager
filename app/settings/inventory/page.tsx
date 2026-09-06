@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { CreateCategoryForm, DeleteCategoryButton } from "@/components/category-management";
+import { CreateCategoryForm, DeleteCategoryButton, SubcategoryActionsMenu } from "@/components/category-management";
 import { authenticate } from "@/server/session";
 import prisma from "@/prisma/prisma";
 
@@ -16,7 +16,7 @@ export default async function InventorySettings() {
 
     const categories = await prisma.category.findMany({
         where: { parentId: null },
-        orderBy: {name: "asc"},
+        orderBy: { name: "asc" },
         include: {
             _count: {
                 select: {
@@ -25,9 +25,7 @@ export default async function InventorySettings() {
                 },
             },
             children: {
-                orderBy: {
-                    name: "asc",
-                },
+                orderBy: { name: "asc" },
                 include: {
                     _count: {
                         select: {
@@ -41,6 +39,7 @@ export default async function InventorySettings() {
     });
 
     const parentCategories = categories.map((category) => ({ id: category.id, name: category.name }));
+    const subcategories = categories.flatMap((category) => category.children.map((subcategory) => ({ id: subcategory.id, name: subcategory.name, parentName: category.name })));
 
     return (
         <section className="min-w-0 flex-1">
@@ -92,20 +91,16 @@ export default async function InventorySettings() {
                                 {category.children.length > 0 && (
                                     <div className="ml-6 mt-4 border-l border-border pl-5">
                                         {category.children.map((subcategory) => (
-                                            <div key={subcategory.id} className="flex items-center justify-between gap-6 border-border/50 py-3 first:border-t-0">
+                                            <div key={subcategory.id} className="flex items-center justify-between gap-6 py-3">
                                                 <div>
                                                     <div className="flex items-center gap-3">
                                                         <p className="text-sm text-fg">{subcategory.name}</p>
                                                         <span className="rounded-full border border-border px-2.5 py-0.5 text-xs text-fg-muted">Subcategory</span>
                                                     </div>
-
-                                                    <p className="mt-1 text-xs text-fg-dim">
-                                                        {subcategory._count.items}{" "}
-                                                        {subcategory._count.items === 1 ? "item" : "items"}
-                                                    </p>
+                                                    <p className="mt-1 text-xs text-fg-dim">{subcategory._count.items}{" "}{subcategory._count.items === 1 ? "item" : "items"}</p>
                                                 </div>
 
-                                                <DeleteCategoryButton categoryId={subcategory.id} categoryName={subcategory.name} disabled={subcategory._count.items > 0 || subcategory._count.children > 0} />
+                                                <SubcategoryActionsMenu subcategoryId={subcategory.id} subcategoryName={subcategory.name} currentParentId={category.id} itemCount={subcategory._count.items} parentCategories={parentCategories} subcategories={subcategories} />
                                             </div>
                                         ))}
                                     </div>
