@@ -1,10 +1,22 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { createCategory, deleteCategory, type CategoryActionState } from "@/server/categories";
+import { createCategory, deleteAllItems, deleteCategory, moveAllItems, relocateSubcategory, type CategoryActionState, type CategoryBulkActionState } from "@/server/categories";
+import ActionMenu, { actionMenuItemCSS, dangerousActionMenuItemCSS } from "@/components/action-menu";
+import Window from "@/components/window";
 
 type ParentCategory = { id: number; name: string; };
 type CreateCategoryFormProps = { parentCategories: ParentCategory[]; };
+type DeleteCategoryButtonProps = { categoryId: number; categoryName: string; disabled?: boolean; };
+type SubcategoryOption = { id: number; name: string; parentName: string };
+type SubcategoryManagementControlsProps = {
+    subcategoryId: number;
+    subcategoryName: string;
+    currentParentId: number;
+    itemCount: number;
+    parentCategories: ParentCategory[];
+    subcategories: SubcategoryOption[];
+};
 
 export function CreateCategoryForm({parentCategories}: CreateCategoryFormProps) {
     const [level, setLevel] = useState<"CATEGORY" | "SUBCATEGORY">("CATEGORY");
@@ -77,8 +89,6 @@ export function CreateCategoryForm({parentCategories}: CreateCategoryFormProps) 
     );
 }
 
-type DeleteCategoryButtonProps = { categoryId: number; categoryName: string; disabled?: boolean; };
-
 export function DeleteCategoryButton({categoryId, categoryName, disabled = false }: DeleteCategoryButtonProps) {
     const deleteAction = deleteCategory.bind(null, categoryId);
 
@@ -103,5 +113,96 @@ export function DeleteCategoryButton({categoryId, categoryName, disabled = false
                 Delete
             </button>
         </form>
+    );
+}
+
+export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, currentParentId, itemCount, parentCategories, subcategories }: SubcategoryManagementControlsProps) {
+    const [modal, setModal] = useState< | "relocate" | "move" | "deleteParts" | null>(null);
+    const relocateAction = relocateSubcategory.bind(null, subcategoryId);
+    const moveAction = moveAllItems.bind(null, subcategoryId);
+    const deleteItemsAction = deleteAllItems.bind(null, subcategoryId);
+    const deleteCategoryAction = deleteCategory.bind(null, subcategoryId);
+    const [relocateState, relocateFormAction, relocating] = useActionState<CategoryBulkActionState, FormData>(relocateAction, undefined);
+    const [moveState, moveFormAction, moving] = useActionState<CategoryBulkActionState, FormData>(moveAction, undefined);
+    const [deleteState, deleteFormAction, deleting] = useActionState<CategoryBulkActionState, FormData>(deleteItemsAction, undefined);
+    const otherParents = parentCategories.filter((category) => category.id !== currentParentId);
+    const otherSubcategories = subcategories.filter((subcategory) => subcategory.id !== subcategoryId);
+
+    return (
+        <>
+            <ActionMenu>
+                <button type="button" className={actionMenuItemCSS} onClick={() => setModal("relocate")}>Relocate</button>
+                <button type="button" disabled={itemCount === 0} className={actionMenuItemCSS} onClick={() => setModal("move")}>Move All Parts</button>
+                <button type="button" disabled={itemCount === 0} className={dangerousActionMenuItemCSS} onClick={() => setModal("deleteParts")}>Delete All Parts</button>
+
+                <form
+                    action={deleteCategoryAction}
+                    onSubmit={(event) => {
+                        if (itemCount > 0 || !window.confirm(`Delete ${subcategoryName}?`)) {
+                            event.preventDefault();
+                        }
+                    }}
+                >
+                    <button type="submit" disabled={itemCount > 0} className={dangerousActionMenuItemCSS}>Delete Subcategory</button>
+                </form>
+            </ActionMenu>
+
+            <Window open={modal === "relocate"} onClose={() => setModal(null)} title="Relocate Subcategory" description={`Move ${subcategoryName} under another parent category.`}>
+                <form action={relocateFormAction} className="space-y-4">
+                    <select name="parentId" required defaultValue="" className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg outline-none focus:border-border-focus">
+                        <option value="" disabled>Select category</option>
+
+                        {otherParents.map((category) => (
+                            <option key={category.id} value={category.id}>{category.name}</option>
+                        ))}
+                    </select>
+
+                    {relocateState?.error && (
+                        <p className="text-sm text-accent">{relocateState.error}</p>
+                    )}
+
+                    <div className="flex justify-end gap-2">
+                        <button type="button" onClick={() => setModal(null)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">Cancel</button>
+                        <button disabled={relocating} className="rounded-md bg-accent px-4 py-2 text-sm text-white">Relocate
+                        </button>
+                    </div>
+                </form>
+            </Window>
+
+            <Window open={modal === "move"} onClose={() => setModal(null)} title="Move All Parts" description={`Move every part currently stored in ${subcategoryName}.`}>
+                <form action={moveFormAction} className="space-y-4">
+                    <select name="targetCategoryId" required defaultValue="" className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg outline-none focus:border-border-focus">
+                        <option value="" disabled>Select destination</option>
+
+                        {otherSubcategories.map((subcategory) => (
+                            <option key={subcategory.id} value={subcategory.id}>{subcategory.parentName}{" "}/{" "}{subcategory.name}</option>
+                        ))}
+                    </select>
+
+                    {moveState?.error && (
+                        <p className="text-sm text-accent">{moveState.error}</p>
+                    )}
+
+                    <div className="flex justify-end gap-2">
+                        <button type="button" onClick={() => setModal(null)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">Cancel</button>
+                        <button disabled={moving} className="rounded-md bg-accent px-4 py-2 text-sm text-white">Move Parts</button>
+                    </div>
+                </form>
+            </Window>
+
+            <Window open={modal === "deleteParts"} onClose={() => setModal(null)} title="Delete All Parts" description={`Permanently delete all ${itemCount} parts from ${subcategoryName}.`}>
+                <form action={deleteFormAction} className="space-y-4">
+                    {deleteState?.error && (
+                        <p className="text-sm text-accent">{deleteState.error}</p>
+                    )}
+
+                    <p className="text-sm text-fg-muted">This cannot be undone. Parts with project history cannot be deleted.</p>
+                    <div className="flex justify-end gap-2">
+                        <button type="button" onClick={() => setModal(null)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">Cancel</button>
+                        <button disabled={deleting} className="rounded-md border border-accent/50 px-4 py-2 text-sm text-accent hover:bg-accent/10">Delete All Parts</button>
+                    </div>
+                </form>
+            </Window>
+        </>
     );
 }
