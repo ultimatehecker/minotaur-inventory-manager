@@ -1,10 +1,10 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { useActionState, useState } from "react";
+import ActionMenu, { dangerousActionMenuItemCSS} from "@/components/action-menu";
+import { useActionState, useTransition, useState } from "react";
 import Window from "@/components/window";
-
-import { createItem, type CreateItemState } from "@/server/items";
+import { createItem, deleteItem, type CreateItemState } from "@/server/items";
 
 type AddItemButtonProps = { categoryId: number; categoryName: string };
 
@@ -62,6 +62,65 @@ export function AddItemButton({ categoryId, categoryName }: AddItemButtonProps) 
                         <button type="button" onClick={() => setOpen(false)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted transition-colors hover:text-fg">Cancel</button>
                         <button type="submit" disabled={pending} className="rounded-md bg-accent px-4 py-2 text-sm text-white transition-colors hover:bg-accent-hover disabled:opacity-60">
                             {pending ? "Adding..." : "Add Part"}
+                        </button>
+                    </div>
+                </form>
+            </Window>
+        </>
+    );
+}
+
+type ItemActionsMenuProps = { itemId: number; itemName: string; categoryId: number; };
+
+export function ItemActionsMenu({ itemId, itemName, categoryId }: ItemActionsMenuProps) {
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
+    const [deleting, startDeleting] = useTransition();
+
+    return (
+        <>
+            <ActionMenu>
+                <button type="button" onClick={() => setDeleteOpen(true)} className={dangerousActionMenuItemCSS}>Delete Part</button>
+            </ActionMenu>
+
+            <Window open={deleteOpen} onClose={() => setDeleteOpen(false)} title="Delete Part" description={`Delete ${itemName} from inventory?`}>
+                <form 
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        const formData = new FormData(event.currentTarget);
+
+                        startDeleting(
+                            async () => {
+                                const result = await deleteItem(itemId, categoryId, undefined, formData);
+
+                                if (result?.error) {
+                                    setDeleteError(result.error);
+                                    return;
+                                }
+
+                                setDeleteError(null);
+                                setDeleteOpen(false);
+                            },
+                        );
+                    }}
+                    className="space-y-4"
+                >
+                    <p className="text-sm text-fg-muted">This cannot be undone. Parts with project history cannot be deleted.</p>
+
+                    {deleteError && (
+                        <p className="text-sm text-accent">{deleteError}</p>
+                    )}
+
+                    <div className="flex justify-end gap-2">
+                        <button 
+                            type="button" 
+                            onClick={() => {
+                                setDeleteError(null);
+                                setDeleteOpen(false);
+                            }}
+                            className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted">Cancel</button>
+                        <button type="submit" disabled={deleting} className="rounded-md border border-accent/50 px-4 py-2 text-sm text-accent hover:bg-accent/10 disabled:opacity-60">
+                            {deleting ? "Deleting..." : "Delete Part"}
                         </button>
                     </div>
                 </form>

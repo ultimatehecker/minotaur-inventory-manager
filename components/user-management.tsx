@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useTransition, useState } from "react";
 import { createUser, deactivateUser, reactivateUser, promoteUser, demoteUser, type CreateUserState, type ReactivateUserState, type PromoteUserState } from "@/server/users";
 
 import ActionMenu, { actionMenuItemCSS, dangerousActionMenuItemCSS } from "@/components/action-menu";
@@ -200,10 +200,10 @@ export function DemoteUserButton({ userId, userName }: DemoteUserButtonProps) {
 
 export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuProps) {
     const [promoteOpen, setPromoteOpen] = useState(false);
-    const promoteAction = promoteUser.bind(null, userId);
     const demoteAction = demoteUser.bind(null, userId);
     const deactivateAction = deactivateUser.bind(null, userId);
-    const [promoteState, promoteFormAction, promoting] = useActionState<PromoteUserState, FormData>(promoteAction, undefined);
+    const [promoteError, setPromoteError] = useState<string | null>(null);
+    const [promoting, startPromoting] = useTransition();
 
     if (userRole === "ADMINISTRATOR") return null;
 
@@ -240,7 +240,29 @@ export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuP
             </ActionMenu>
 
             <Window open={promoteOpen} onClose={() => setPromoteOpen(false)} title="Promote to Manager" description={`Set a unique password for ${userName}.`}>
-                <form action={promoteFormAction} className="space-y-4">
+                <form 
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        const formData = new FormData(event.currentTarget);
+
+                        startPromoting(async () => {
+                            const result = await promoteUser(userId, undefined, formData);
+
+                            if (result?.error) {
+                                setPromoteError(
+                                    result.error,
+                                );
+
+                                return;
+                            }
+
+                            setPromoteError(null);
+                            setPromoteOpen(false);
+                        });
+                    }}
+
+                    className="space-y-4"
+                >
                     <div className="space-y-2">
                         <label htmlFor={`promote-password-${userId}`} className="block text-sm font-medium text-fg">Manager Password</label>
                         <input
@@ -256,8 +278,8 @@ export function UserActionsMenu({ userId, userName, userRole }: UserActionsMenuP
                         />
                     </div>
 
-                    {promoteState?.error && (
-                        <p className="text-sm text-accent">{promoteState.error}</p>
+                    {promoteError && (
+                        <p className="text-sm text-accent">{promoteError}</p>
                     )}
 
                     <div className="flex justify-end gap-2">
