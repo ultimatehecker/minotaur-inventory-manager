@@ -5,7 +5,7 @@ import ActionMenu, { actionMenuItemCSS, dangerousActionMenuItemCSS } from "@/com
 import { useMemo, useRef, useActionState, useTransition, useState } from "react";
 import Window from "@/components/ui/window";
 import { createItem, deleteItem, editItem, adjustItemQuantity, type CreateItemState } from "@/server/items";
-import { savePartFieldConfiguration, type ItemFieldConfigurationState } from "@/server/itemField";
+import { savePartFieldConfiguration } from "@/server/itemField";
 import type { ItemFieldDefinitionData, ItemFieldType, ItemFieldValueData } from "@/lib/itemFields";
 import { itemFieldInputName, buildItemNamePreview } from "@/lib/itemFields";
 
@@ -217,7 +217,7 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                                     name="partNumber"
                                     required
                                     defaultValue={item.partNumber}
-                                    className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-accent"
+                                    className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-gray-400"
                                 />
                             </div>
 
@@ -228,7 +228,7 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                                     name="description"
                                     rows={3}
                                     defaultValue={item.description}
-                                    className="w-full resize-none rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-accent"
+                                    className="w-full resize-none rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-gray-400"
                                 />
                             </div>
 
@@ -240,7 +240,7 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                                         name="vendorId"
                                         required
                                         defaultValue={item.vendorId}
-                                        className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-accent"
+                                        className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-gray-400"
                                     >
                                         {vendors.map((vendor) => (
                                             <option key={vendor.id} value={vendor.id}>{vendor.name}</option>
@@ -254,7 +254,7 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                                         id={`edit-location-${item.id}`}
                                         name="locationId"
                                         defaultValue={item.locationId ?? ""}
-                                        className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-accent"
+                                        className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-gray-400"
                                     >
                                         <option value="">Not Set</option>
                                         {locations.map((location) => (
@@ -313,7 +313,8 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                 </form>
             </Window>
 
-            <Window open={window === "adjust"} onClose={closeWindow} title="Adjust Quantity" description={`${item.name} currently has ${item.quantity} total.`}>
+            {/*<Window open={window === "adjust"} onClose={closeWindow} title="Adjust Quantity" description={`${item.name} currently has ${item.quantity} total.`}>*/}
+            <Window open={window === "adjust"} onClose={closeWindow} title="Adjust Quantity">
                 <form
                     className="space-y-4"
                     onSubmit={(event) => {
@@ -334,14 +335,14 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                     }}
                 >
                     <div className="space-y-2">
-                        <label htmlFor={`quantity-adjustment-${item.id}`} className="block text-sm font-medium text-fg">Adjustment</label>
+                        <label htmlFor={`quantity-adjustment-${item.id}`} className="block text-sm font-medium text-fg">Adjustment (currently have {item.quantity} in stock)</label>
                         <input
                             id={`quantity-adjustment-${item.id}`}
                             name="quantityDelta"
                             type="number"
                             required
                             placeholder="+4 or -2"
-                            className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none placeholder:text-fg-dim transition-colors focus:border-accent"
+                            className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none placeholder:text-fg-dim transition-colors focus:border-gray-400"
                         />
                     </div>
 
@@ -352,7 +353,7 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                             name="reason"
                             rows={3}
                             placeholder="New shipment, damaged part, inventory correction..."
-                            className="w-full resize-none rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none placeholder:text-fg-dim transition-colors focus:border-accent"
+                            className="w-full resize-none rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none placeholder:text-fg-dim transition-colors focus:border-gray-400"
                         />
                     </div>
 
