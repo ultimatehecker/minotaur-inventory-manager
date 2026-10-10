@@ -1,4 +1,4 @@
-export type ItemFieldType = | "TEXT" | "INTEGER" | "DECIMAL" | "SELECT";
+export type ItemFieldType = "TEXT" | "INTEGER" | "DECIMAL" | "SELECT";
 export type ItemFieldDefinitionData = {
     id: number;
     key: string;
@@ -11,7 +11,7 @@ export type ItemFieldDefinitionData = {
     valueCount?: number;
 };
 
-export type ItemFieldValueData = { fieldDefinitionId: number; value: string; };
+export type ItemFieldValueData = { fieldDefinitionId: number; value: string };
 export function itemFieldInputName(fieldId: number): string {
     return `itemField_${fieldId}`;
 }
@@ -24,15 +24,10 @@ export function formatItemFieldValue(value: string, unit: string | null): string
     return unit ? `${trimmed}${unit}` : trimmed;
 }
 
-export function buildItemNamePreview(template: string, fields: ItemFieldDefinitionData[], values: Record<number, string>): { name: string; complete: boolean; } {
+export function buildItemNamePreview(template: string, fields: ItemFieldDefinitionData[], values: Record<number, string>): { name: string; complete: boolean } {
     let complete = true;
 
-    const fieldsByKey = new Map(
-        fields.map((field) => [
-            field.key,
-            field,
-        ])
-    );
+    const fieldsByKey = new Map(fields.map((field) => [field.key, field]));
 
     const name = template.replace(/\{([a-z][a-z0-9_]*)\}/g, (_match, key: string) => {
         const field = fieldsByKey.get(key);

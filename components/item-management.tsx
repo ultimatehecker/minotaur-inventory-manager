@@ -76,9 +76,13 @@ export function AddItemButton({ categoryId, categoryName, vendors, locations, na
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-fg-muted">Vendor</label>
                                     <select name="vendorId" required defaultValue="" className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-gray-400">
-                                        <option value="" disabled>Select</option>
+                                        <option value="" disabled>
+                                            Select
+                                        </option>
                                         {vendors.map((vendor) => (
-                                            <option key={vendor.id} value={vendor.id}>{vendor.name}</option>
+                                            <option key={vendor.id} value={vendor.id}>
+                                                {vendor.name}
+                                            </option>
                                         ))}
                                     </select>
                                 </div>
@@ -87,7 +91,9 @@ export function AddItemButton({ categoryId, categoryName, vendors, locations, na
                                     <select name="locationId" defaultValue="" className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-gray-400">
                                         <option value="">Not Set</option>
                                         {locations.map((location) => (
-                                            <option key={location.id} value={location.id}>{locationLabel(location, locations)}</option>
+                                            <option key={location.id} value={location.id}>
+                                                {locationLabel(location, locations)}
+                                            </option>
                                         ))}
                                     </select>
                                 </div>
@@ -115,9 +121,13 @@ export function AddItemButton({ categoryId, categoryName, vendors, locations, na
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-fg">Vendor</label>
                                     <select name="vendorId" required defaultValue="" className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg">
-                                        <option value="" disabled>Select</option>
+                                        <option value="" disabled>
+                                            Select
+                                        </option>
                                         {vendors.map((vendor) => (
-                                            <option key={vendor.id} value={vendor.id}>{vendor.name}</option>
+                                            <option key={vendor.id} value={vendor.id}>
+                                                {vendor.name}
+                                            </option>
                                         ))}
                                     </select>
                                 </div>
@@ -128,20 +138,22 @@ export function AddItemButton({ categoryId, categoryName, vendors, locations, na
                                 <select name="locationId" defaultValue="" className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg">
                                     <option value="">Not Set</option>
                                     {locations.map((location) => (
-                                        <option key={location.id} value={location.id}>{locationLabel(location, locations)}</option>
+                                        <option key={location.id} value={location.id}>
+                                            {locationLabel(location, locations)}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
                         </>
                     )}
 
-                    {state?.error && (
-                        <p className="text-sm text-accent">{state.error}</p>
-                    )}
+                    {state?.error && <p className="text-sm text-accent">{state.error}</p>}
 
                     <div className="border-t border-border pt-4">
                         <div className="flex justify-end gap-2">
-                            <button type="button" onClick={() => setOpen(false)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted transition-colors hover:text-fg">Cancel</button>
+                            <button type="button" onClick={() => setOpen(false)} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted transition-colors hover:text-fg">
+                                Cancel
+                            </button>
                             <button type="submit" disabled={pending} className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-60">
                                 {pending ? "Adding..." : "Add Part"}
                             </button>
@@ -211,7 +223,9 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                         <>
                             <ItemFieldInputs fields={itemFields} nameTemplate={nameTemplate} initialName={item.name} initialValues={item.itemFieldValues} />
                             <div className="space-y-2">
-                                <label htmlFor={`edit-part-number-${item.id}`} className="block text-sm font-medium text-fg-muted">Part Number</label>
+                                <label htmlFor={`edit-part-number-${item.id}`} className="block text-sm font-medium text-fg-muted">
+                                    Part Number
+                                </label>
                                 <input
                                     id={`edit-part-number-${item.id}`}
                                     name="partNumber"
@@ -222,7 +236,9 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                             </div>
 
                             <div className="space-y-2">
-                                <label htmlFor={`edit-description-${item.id}`} className="block text-sm font-medium text-fg-muted">Description</label>
+                                <label htmlFor={`edit-description-${item.id}`} className="block text-sm font-medium text-fg-muted">
+                                    Description
+                                </label>
                                 <textarea
                                     id={`edit-description-${item.id}`}
                                     name="description"
@@ -234,7 +250,9 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
 
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <label htmlFor={`edit-vendor-${item.id}`} className="block text-sm font-medium text-fg-muted">Vendor</label>
+                                    <label htmlFor={`edit-vendor-${item.id}`} className="block text-sm font-medium text-fg-muted">
+                                        Vendor
+                                    </label>
                                     <select
                                         id={`edit-vendor-${item.id}`}
                                         name="vendorId"
@@ -243,13 +261,17 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                                         className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none transition-colors focus:border-gray-400"
                                     >
                                         {vendors.map((vendor) => (
-                                            <option key={vendor.id} value={vendor.id}>{vendor.name}</option>
+                                            <option key={vendor.id} value={vendor.id}>
+                                                {vendor.name}
+                                            </option>
                                         ))}
                                     </select>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor={`edit-location-${item.id}`} className="block text-sm font-medium text-fg-muted">Location</label>
+                                    <label htmlFor={`edit-location-${item.id}`} className="block text-sm font-medium text-fg-muted">
+                                        Location
+                                    </label>
                                     <select
                                         id={`edit-location-${item.id}`}
                                         name="locationId"
@@ -258,7 +280,9 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                                     >
                                         <option value="">Not Set</option>
                                         {locations.map((location) => (
-                                            <option key={location.id} value={location.id}>{locationLabel(location, locations)}</option>
+                                            <option key={location.id} value={location.id}>
+                                                {locationLabel(location, locations)}
+                                            </option>
                                         ))}
                                     </select>
                                 </div>
@@ -281,7 +305,9 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                                 <label className="block text-sm font-medium text-fg">Vendor</label>
                                 <select name="vendorId" required defaultValue={item.vendorId} className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg">
                                     {vendors.map((vendor) => (
-                                        <option key={vendor.id} value={vendor.id}>{vendor.name}</option>
+                                        <option key={vendor.id} value={vendor.id}>
+                                            {vendor.name}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -291,20 +317,22 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                                 <select name="locationId" defaultValue={item.locationId ?? ""} className="w-full rounded-md border bg-input px-3 py-2.5 text-sm text-fg">
                                     <option value="">Not Set</option>
                                     {locations.map((location) => (
-                                        <option key={location.id} value={location.id}>{locationLabel(location, locations)}</option>
+                                        <option key={location.id} value={location.id}>
+                                            {locationLabel(location, locations)}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
                         </>
                     )}
 
-                    {error && (
-                        <p className="text-sm text-accent">{error}</p>
-                    )}
+                    {error && <p className="text-sm text-accent">{error}</p>}
 
                     <div className="border-t border-border pt-4">
                         <div className="flex justify-end gap-2">
-                            <button type="button" onClick={closeWindow} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted transition-colors hover:text-fg">Cancel</button>
+                            <button type="button" onClick={closeWindow} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted transition-colors hover:text-fg">
+                                Cancel
+                            </button>
                             <button type="submit" disabled={pending} className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-60">
                                 {pending ? "Saving..." : "Save"}
                             </button>
@@ -335,7 +363,9 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                     }}
                 >
                     <div className="space-y-2">
-                        <label htmlFor={`quantity-adjustment-${item.id}`} className="block text-sm font-medium text-fg">Adjustment (currently have {item.quantity} in stock)</label>
+                        <label htmlFor={`quantity-adjustment-${item.id}`} className="block text-sm font-medium text-fg">
+                            Adjustment (currently have {item.quantity} in stock)
+                        </label>
                         <input
                             id={`quantity-adjustment-${item.id}`}
                             name="quantityDelta"
@@ -347,7 +377,9 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                     </div>
 
                     <div className="space-y-2">
-                        <label htmlFor={`quantity-reason-${item.id}`} className="block text-sm font-medium text-fg">Reason</label>
+                        <label htmlFor={`quantity-reason-${item.id}`} className="block text-sm font-medium text-fg">
+                            Reason
+                        </label>
                         <textarea
                             id={`quantity-reason-${item.id}`}
                             name="reason"
@@ -357,13 +389,13 @@ export function ItemActionsMenu({ item, categoryId, vendors, locations, nameTemp
                         />
                     </div>
 
-                    {error && (
-                        <p className="text-sm text-accent">{error}</p>
-                    )}
+                    {error && <p className="text-sm text-accent">{error}</p>}
 
                     <div className="border-t border-border pt-4">
                         <div className="flex justify-end gap-2">
-                            <button type="button" onClick={closeWindow} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted transition-colors hover:text-fg">Cancel</button>
+                            <button type="button" onClick={closeWindow} className="rounded-md border border-border px-4 py-2 text-sm text-fg-muted transition-colors hover:text-fg">
+                                Cancel
+                            </button>
                             <button type="submit" disabled={pending} className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-60">
                                 {pending ? "Adjusting..." : "Apply Adjustment"}
                             </button>
@@ -431,45 +463,55 @@ type ItemFieldConfigurationFormProps = {
 };
 
 function makeKey(label: string): string {
-    return label.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").replace(/^[^a-z]+/, "");
+    return label
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "")
+        .replace(/^[^a-z]+/, "");
 }
 
 export function ItemFieldConfigurationForm({ categoryId, nameTemplate: initialNameTemplate, fields: initialFields, onSaved, onCancel }: ItemFieldConfigurationFormProps) {
     const nextId = useRef(0);
     const [nameTemplate, setNameTemplate] = useState(initialNameTemplate ?? "");
-    const [fields, setFields] = useState<DraftField[]>(() => initialFields.map((field) => ({
-        clientId: `existing-${field.id}`,
-        id: field.id,
-        key: field.key,
-        label: field.label,
-        type: field.type,
-        required: field.required,
-        unit: field.unit ?? "",
-        optionsText: field.options.join(", "),
-        valueCount: field.valueCount ?? 0,
-    })));
+    const [fields, setFields] = useState<DraftField[]>(() =>
+        initialFields.map((field) => ({
+            clientId: `existing-${field.id}`,
+            id: field.id,
+            key: field.key,
+            label: field.label,
+            type: field.type,
+            required: field.required,
+            unit: field.unit ?? "",
+            optionsText: field.options.join(", "),
+            valueCount: field.valueCount ?? 0,
+        }))
+    );
 
     const [error, setError] = useState<string | null>(null);
     const [pending, startTransition] = useTransition();
     const placeholders = useMemo(() => fields.filter((field) => field.key).map((field) => `{${field.key}}`), [fields]);
 
     function updateField(clientId: string, update: Partial<DraftField>) {
-        setFields((current) => current.map((field) => field.clientId === clientId ? {...field, ...update} : field));
+        setFields((current) => current.map((field) => (field.clientId === clientId ? { ...field, ...update } : field)));
     }
 
     function addField() {
         const clientId = `new-${nextId.current++}`;
 
-        setFields((current) => [...current, {
-            clientId,
-            key: "",
-            label: "",
-            type: "TEXT",
-            required: false,
-            unit: "",
-            optionsText: "",
-            valueCount: 0,
-        }]);
+        setFields((current) => [
+            ...current,
+            {
+                clientId,
+                key: "",
+                label: "",
+                type: "TEXT",
+                required: false,
+                unit: "",
+                optionsText: "",
+                valueCount: 0,
+            },
+        ]);
     }
 
     return (
@@ -489,7 +531,13 @@ export function ItemFieldConfigurationForm({ categoryId, nameTemplate: initialNa
                         type: field.type,
                         required: field.required,
                         unit: field.unit || null,
-                        options: field.type === "SELECT" ? field.optionsText.split(",").map((option) => option.trim()).filter(Boolean) : [],
+                        options:
+                            field.type === "SELECT"
+                                ? field.optionsText
+                                      .split(",")
+                                      .map((option) => option.trim())
+                                      .filter(Boolean)
+                                : [],
                     })),
                 };
 
@@ -509,7 +557,9 @@ export function ItemFieldConfigurationForm({ categoryId, nameTemplate: initialNa
             }}
         >
             <div className="space-y-2">
-                <label htmlFor={`name-template-${categoryId}`} className="block text-sm font-medium text-fg">Generated Name Format</label>
+                <label htmlFor={`name-template-${categoryId}`} className="block text-sm font-medium text-fg">
+                    Generated Name Format
+                </label>
                 <input
                     id={`name-template-${categoryId}`}
                     value={nameTemplate}
@@ -519,9 +569,7 @@ export function ItemFieldConfigurationForm({ categoryId, nameTemplate: initialNa
                 />
 
                 <p className="text-xs text-fg-muted">Leave this blank to keep entering part names manually. Field units are appended automatically.</p>
-                {placeholders.length > 0 && (
-                    <p className="text-xs text-fg-dim">Available fields:{" "} {placeholders.join("  ")}</p>
-                )}
+                {placeholders.length > 0 && <p className="text-xs text-fg-dim">Available fields: {placeholders.join("  ")}</p>}
             </div>
 
             <div className="space-y-3">
@@ -552,13 +600,12 @@ export function ItemFieldConfigurationForm({ categoryId, nameTemplate: initialNa
                                         <label className="text-xs font-medium text-fg-muted">Label</label>
                                         <input
                                             value={field.label}
-                                            onChange={(event,) => {
+                                            onChange={(event) => {
                                                 const label = event.currentTarget.value;
 
                                                 updateField(field.clientId, {
                                                     label,
-                                                    ...(field.id ===
-                                                    undefined ? { key: makeKey(label) } : {}),
+                                                    ...(field.id === undefined ? { key: makeKey(label) } : {}),
                                                 });
                                             }}
                                             placeholder="Width"
@@ -665,7 +712,9 @@ export function ItemFieldConfigurationForm({ categoryId, nameTemplate: initialNa
             </div>
 
             {error && (
-                <p role="alert" className="text-sm text-accent">{error}</p>
+                <p role="alert" className="text-sm text-accent">
+                    {error}
+                </p>
             )}
 
             <p className="text-xs text-fg-dim"> Existing parts are not renamed automatically when this configuration changes. Their name is regenerated the next time they areedited.</p>
@@ -679,11 +728,7 @@ export function ItemFieldConfigurationForm({ categoryId, nameTemplate: initialNa
                     Cancel
                 </button>
 
-                <button
-                    type="submit"
-                    disabled={pending}
-                    className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
-                >
+                <button type="submit" disabled={pending} className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60">
                     {pending ? "Saving..." : "Save Configuration"}
                 </button>
             </div>
@@ -728,7 +773,9 @@ export function ItemFieldInputs({ fields, nameTemplate, initialName = "", initia
 
                                         return (
                                             <div key={field.id} className="min-w-0 space-y-2">
-                                                <label htmlFor={itemFieldInputName(field.id)} className="block text-sm font-medium text-fg-muted">{label}</label>
+                                                <label htmlFor={itemFieldInputName(field.id)} className="block text-sm font-medium text-fg-muted">
+                                                    {label}
+                                                </label>
                                                 {field.type === "SELECT" ? (
                                                     <select
                                                         id={itemFieldInputName(field.id)}
@@ -747,7 +794,9 @@ export function ItemFieldInputs({ fields, nameTemplate, initialName = "", initia
                                                     >
                                                         <option value="">{field.required ? "Select" : "Not Set"}</option>
                                                         {field.options.map((option) => (
-                                                            <option key={option} value={option}>{option}</option>
+                                                            <option key={option} value={option}>
+                                                                {option}
+                                                            </option>
                                                         ))}
                                                     </select>
                                                 ) : (
@@ -790,7 +839,9 @@ export function ItemFieldInputs({ fields, nameTemplate, initialName = "", initia
                 </div>
             ) : (
                 <div className="space-y-2">
-                    <label htmlFor="part-name" className="block text-sm font-medium text-fg">Part Name</label>
+                    <label htmlFor="part-name" className="block text-sm font-medium text-fg">
+                        Part Name
+                    </label>
                     <input id="part-name" name="name" required defaultValue={initialName} className="w-full rounded-md border border-border bg-input px-3 py-2.5 text-sm text-fg outline-none focus:border-border-focus" />
                 </div>
             )}

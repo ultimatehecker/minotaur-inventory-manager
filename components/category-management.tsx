@@ -155,10 +155,18 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
     return (
         <>
             <ActionMenu>
-                <button type="button" className={actionMenuItemCSS} onClick={() => setModal("configure")}>Configure Part Form</button>
-                <button type="button" className={actionMenuItemCSS} onClick={() => setModal("relocate")}>Relocate</button>
-                <button type="button" disabled={itemCount === 0} className={actionMenuItemCSS} onClick={() => setModal("move")}>Move All Parts</button>
-                <button type="button" disabled={itemCount === 0} className={dangerousActionMenuItemCSS} onClick={() => setModal("deleteParts")}>Delete All Parts</button>
+                <button type="button" className={actionMenuItemCSS} onClick={() => setModal("configure")}>
+                    Configure Part Form
+                </button>
+                <button type="button" className={actionMenuItemCSS} onClick={() => setModal("relocate")}>
+                    Relocate
+                </button>
+                <button type="button" disabled={itemCount === 0} className={actionMenuItemCSS} onClick={() => setModal("move")}>
+                    Move All Parts
+                </button>
+                <button type="button" disabled={itemCount === 0} className={dangerousActionMenuItemCSS} onClick={() => setModal("deleteParts")}>
+                    Delete All Parts
+                </button>
 
                 <form
                     action={deleteCategoryAction}
@@ -168,18 +176,14 @@ export function SubcategoryActionsMenu({ subcategoryId, subcategoryName, current
                         }
                     }}
                 >
-                    <button type="submit" disabled={itemCount > 0} className={dangerousActionMenuItemCSS}>Delete Subcategory</button>
+                    <button type="submit" disabled={itemCount > 0} className={dangerousActionMenuItemCSS}>
+                        Delete Subcategory
+                    </button>
                 </form>
             </ActionMenu>
 
             <Window open={modal === "configure"} onClose={() => setModal(null)} title="Configure Part Form" description={`Define custom fields and generated part names for ${subcategoryName}.`} size="lg">
-                <ItemFieldConfigurationForm
-                    categoryId={subcategoryId}
-                    nameTemplate={nameTemplate}
-                    fields={itemFields}
-                    onSaved={() => setModal(null)}
-                    onCancel={() => setModal(null)}
-                />
+                <ItemFieldConfigurationForm categoryId={subcategoryId} nameTemplate={nameTemplate} fields={itemFields} onSaved={() => setModal(null)} onCancel={() => setModal(null)} />
             </Window>
 
             <Window open={modal === "relocate"} onClose={() => setModal(null)} title="Relocate Subcategory" description={`Move ${subcategoryName} under another parent category.`}>

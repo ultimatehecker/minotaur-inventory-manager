@@ -33,12 +33,12 @@ const AdjustmentSchema = z.object({
 export type CreateItemState = { error?: string } | undefined;
 export type ItemActionState = { error?: string; success?: string } | undefined;
 
-type ParsedItemFieldValue = { fieldDefinitionId: number; value: string; };
+type ParsedItemFieldValue = { fieldDefinitionId: number; value: string };
 type ActiveItemField = {
     id: number;
     key: string;
     label: string;
-    type: | "TEXT" | "INTEGER" | "DECIMAL" | "SELECT";
+    type: "TEXT" | "INTEGER" | "DECIMAL" | "SELECT";
     required: boolean;
     unit: string | null;
     options: unknown;
@@ -94,7 +94,7 @@ function getSelectOptions(options: unknown): string[] {
     return Array.isArray(options) ? options.filter((option): option is string => typeof option === "string") : [];
 }
 
-function parseItemFieldValues(fields: ActiveItemField[], formData: FormData): { values: ParsedItemFieldValue[]; valuesByKey: Map<string, string>; error?: string; } {
+function parseItemFieldValues(fields: ActiveItemField[], formData: FormData): { values: ParsedItemFieldValue[]; valuesByKey: Map<string, string>; error?: string } {
     const values: ParsedItemFieldValue[] = [];
     const valuesByKey = new Map<string, string>();
 
@@ -144,10 +144,7 @@ function parseItemFieldValues(fields: ActiveItemField[], formData: FormData): { 
 }
 
 function buildGeneratedName(template: string, fields: ActiveItemField[], valuesByKey: Map<string, string>): string | null {
-    const fieldsByKey = new Map(fields.map((field) => [
-        field.key,
-        field,
-    ]));
+    const fieldsByKey = new Map(fields.map((field) => [field.key, field]));
 
     let complete = true;
     const generatedName = template.replace(/\{([a-z][a-z0-9_]*)\}/g, (_match, key: string) => {
@@ -167,7 +164,7 @@ function buildGeneratedName(template: string, fields: ActiveItemField[], valuesB
     return generatedName.replace(/\s+/g, " ").trim();
 }
 
-function resolveItemName(manualName: string | undefined, nameTemplate: string | null, fields: ActiveItemField[], valuesByKey: Map<string, string>): { name?: string; error?: string; } {
+function resolveItemName(manualName: string | undefined, nameTemplate: string | null, fields: ActiveItemField[], valuesByKey: Map<string, string>): { name?: string; error?: string } {
     const name = nameTemplate ? buildGeneratedName(nameTemplate, fields, valuesByKey) : manualName?.trim();
 
     if (!name) {
@@ -363,7 +360,7 @@ export async function editItem(itemId: number, categoryId: number, _previousStat
         return { error: customFields.error };
     }
 
-    const resolvedName = resolveItemName(parsed.data.name, item.category.nameTemplate, item.category.itemFields, customFields.valuesByKey,);
+    const resolvedName = resolveItemName(parsed.data.name, item.category.nameTemplate, item.category.itemFields, customFields.valuesByKey);
 
     if (!resolvedName.name) {
         return { error: resolvedName.error ?? "Part name is required." };
@@ -394,7 +391,7 @@ export async function editItem(itemId: number, categoryId: number, _previousStat
         await itemLogger.rejected(session, "Part edit", "invalid_relation", {
             itemId,
             vendorId,
-            locationId: locationId ?? null
+            locationId: locationId ?? null,
         });
 
         return { error: relations.error };
@@ -402,15 +399,9 @@ export async function editItem(itemId: number, categoryId: number, _previousStat
 
     const nextDescription = description ?? "";
     const changedFields: string[] = [];
-    const currentCustomValues = new Map(item.itemFieldValues.map((value) => [
-        value.fieldDefinitionId,
-        value.value,
-    ]));
+    const currentCustomValues = new Map(item.itemFieldValues.map((value) => [value.fieldDefinitionId, value.value]));
 
-    const nextCustomValues = new Map(customFields.values.map((value) => [
-        value.fieldDefinitionId,
-        value.value,
-    ]));
+    const nextCustomValues = new Map(customFields.values.map((value) => [value.fieldDefinitionId, value.value]));
 
     const customValuesChanged = item.category.itemFields.some((field) => (currentCustomValues.get(field.id) ?? "") !== (nextCustomValues.get(field.id) ?? ""));
 
@@ -476,8 +467,8 @@ export async function editItem(itemId: number, categoryId: number, _previousStat
                     },
                 });
             }
-        }}
-    );
+        }
+    });
 
     if (changedFields.length > 0) {
         await itemLogger.completed(session, "Part edit", {

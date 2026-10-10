@@ -11,8 +11,11 @@ import { authenticate, type Session } from "@/server/session";
 const partFieldLogger = createActionLogger("part-fields");
 const DraftFieldSchema = z.object({
     id: z.number().int().positive().optional(),
-    key: z.string().trim().regex(/^[a-z][a-z0-9_]*$/, "Field keys must start with a letter and only contain lowercase letters, numbers, and underscores."),
-    label: z.string().trim().min(1,"Field labels are required.").max(50),
+    key: z
+        .string()
+        .trim()
+        .regex(/^[a-z][a-z0-9_]*$/, "Field keys must start with a letter and only contain lowercase letters, numbers, and underscores."),
+    label: z.string().trim().min(1, "Field labels are required.").max(50),
     type: z.enum(["TEXT", "INTEGER", "DECIMAL", "SELECT"]),
     required: z.boolean(),
     unit: z.string().trim().max(12).nullable(),
@@ -24,7 +27,7 @@ const ConfigurationSchema = z.object({
     fields: z.array(DraftFieldSchema).max(20),
 });
 
-export type ItemFieldConfigurationState = | { error?: string;  success?: string; } | undefined;
+export type ItemFieldConfigurationState = { error?: string; success?: string } | undefined;
 
 async function requireInventoryManager(): Promise<Session> {
     const session = await authenticate();
@@ -105,12 +108,7 @@ export async function savePartFieldConfiguration(categoryId: number, _previousSt
         return { error: `${invalidSelect.label} needs at least one select option.` };
     }
 
-    const activeFieldsByKey = new Map(
-        fields.map((field) => [
-            field.key,
-            field,
-        ])
-    );
+    const activeFieldsByKey = new Map(fields.map((field) => [field.key, field]));
 
     const placeholders = getPlaceholders(parsed.data.nameTemplate);
     const unknownPlaceholder = placeholders.find((key) => !activeFieldsByKey.has(key));
@@ -125,19 +123,9 @@ export async function savePartFieldConfiguration(categoryId: number, _previousSt
         return { error: `Fields used in the generated name must be required. Mark {${optionalPlaceholder}} as required or remove it from the name format.` };
     }
 
-    const existingById = new Map(
-        category.itemFields.map((field) => [
-            field.id,
-            field,
-        ])
-    );
+    const existingById = new Map(category.itemFields.map((field) => [field.id, field]));
 
-    const existingByKey = new Map(
-        category.itemFields.map((field) => [
-            field.key,
-            field,
-        ])
-    );
+    const existingByKey = new Map(category.itemFields.map((field) => [field.key, field]));
 
     for (const field of fields) {
         const existing = field.id ? existingById.get(field.id) : existingByKey.get(field.key);
@@ -168,75 +156,74 @@ export async function savePartFieldConfiguration(categoryId: number, _previousSt
     }
 
     await prisma.$transaction(async (tx) => {
-            const activeFieldIds: number[] = [];
+        const activeFieldIds: number[] = [];
 
-            for (const [sortOrder, field] of fields.entries()) {
-                const existing = field.id ? existingById.get(field.id) : existingByKey.get(field.key);
-                const data = {
-                    key: field.key,
-                    label: field.label,
-                    type: field.type,
-                    required: field.required,
-                    unit: field.unit,
-                    ...(field.type === "SELECT" ? { options: field.options } : {}),
-                    sortOrder,
-                    active: true,
-                };
+        for (const [sortOrder, field] of fields.entries()) {
+            const existing = field.id ? existingById.get(field.id) : existingByKey.get(field.key);
+            const data = {
+                key: field.key,
+                label: field.label,
+                type: field.type,
+                required: field.required,
+                unit: field.unit,
+                ...(field.type === "SELECT" ? { options: field.options } : {}),
+                sortOrder,
+                active: true,
+            };
 
-                if (existing) {
-                    const updated = await tx.itemFieldDefinition.update({
-                        where: { id: existing.id },
-                        data,
-                        select: { id: true },
-                    });
+            if (existing) {
+                const updated = await tx.itemFieldDefinition.update({
+                    where: { id: existing.id },
+                    data,
+                    select: { id: true },
+                });
 
-                    activeFieldIds.push(updated.id);
-                } else {
-                    const created = await tx.itemFieldDefinition.create({
-                        data: { categoryId, ...data },
-                        select: { id: true },
-                    });
+                activeFieldIds.push(updated.id);
+            } else {
+                const created = await tx.itemFieldDefinition.create({
+                    data: { categoryId, ...data },
+                    select: { id: true },
+                });
 
-                    activeFieldIds.push(created.id);
-                }
+                activeFieldIds.push(created.id);
             }
+        }
 
-            await tx.itemFieldDefinition.updateMany({
-                where: {
-                    categoryId,
-                    active: true,
-                    ...(activeFieldIds.length >
-                    0 ? {
-                        id: {
-                            notIn:
-                                activeFieldIds,
-                        },
-                    } : {}),
-                },
+        await tx.itemFieldDefinition.updateMany({
+            where: {
+                categoryId,
+                active: true,
+                ...(activeFieldIds.length > 0
+                    ? {
+                          id: {
+                              notIn: activeFieldIds,
+                          },
+                      }
+                    : {}),
+            },
 
-                data: { active: false },
-            });
+            data: { active: false },
+        });
 
-            await tx.category.update({
-                where: { id: categoryId },
-                data: {
-                    nameTemplate: parsed.data.nameTemplate || null,
-                },
-            });
+        await tx.category.update({
+            where: { id: categoryId },
+            data: {
+                nameTemplate: parsed.data.nameTemplate || null,
+            },
+        });
 
-            await writeAuditLog(tx, {
-                action: "PART_FIELD_UPDATED",
-                entityId: categoryId,
-                entityName: category.name,
-                summary: `Updated the custom part form for "${category.name}".`,
-                performedById: Number(session.user.id),
-                details: {
-                    fieldCount: fields.length,
-                    nameTemplate: parsed.data.nameTemplate || null,
-                },
-            });
-        },
-    );
+        await writeAuditLog(tx, {
+            action: "PART_FIELD_UPDATED",
+            entityId: categoryId,
+            entityName: category.name,
+            summary: `Updated the custom part form for "${category.name}".`,
+            performedById: Number(session.user.id),
+            details: {
+                fieldCount: fields.length,
+                nameTemplate: parsed.data.nameTemplate || null,
+            },
+        });
+    });
 
     await partFieldLogger.completed(session, "Part form configuration", {
         categoryId,

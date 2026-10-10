@@ -72,17 +72,20 @@ export default async function InventoryCategoryPage({ params }: InventoryCategor
     const isSubcategory = category.parentId !== null;
     const canManageInventory = session?.user.role === "MANAGER" || session?.user.role === "ADMINISTRATOR";
 
-    const [locations, vendors] = isSubcategory && canManageInventory ? await Promise.all([
-        prisma.storageLocation.findMany({
-            where: { active: true },
-            orderBy: { name: "asc" },
-        }),
+    const [locations, vendors] =
+        isSubcategory && canManageInventory
+            ? await Promise.all([
+                  prisma.storageLocation.findMany({
+                      where: { active: true },
+                      orderBy: { name: "asc" },
+                  }),
 
-        prisma.vendor.findMany({
-            where: { active: true },
-            orderBy: { name: "asc" },
-        }),
-    ]) : [[], []];
+                  prisma.vendor.findMany({
+                      where: { active: true },
+                      orderBy: { name: "asc" },
+                  }),
+              ])
+            : [[], []];
 
     return (
         <>
@@ -178,7 +181,7 @@ export default async function InventoryCategoryPage({ params }: InventoryCategor
                                                                 quantity: item.quantity,
                                                                 vendorId: item.vendorId,
                                                                 locationId: item.locationId,
-                                                                itemFieldValues: item.itemFieldValues
+                                                                itemFieldValues: item.itemFieldValues,
                                                             }}
                                                             categoryId={category.id}
                                                             vendors={vendors}
