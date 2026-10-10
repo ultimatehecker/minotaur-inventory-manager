@@ -41,7 +41,7 @@ export default function Window({ open, title, description, onClose, children, si
                 if (event.target === event.currentTarget) onClose();
             }}
         >
-            <div role="dialog" aria-modal="true" className={`max-h-[calc(100vh-2rem)] w-full ${widthClass} overflow-y-auto rounded-lg border border-border bg-card p-5 shadow-2xl`}>
+            <div role="dialog" aria-modal="true" className={`max-h-[calc(100vh-2rem)] w-full ${widthClass} overflow-y-auto rounded-lg border border-border bg-card p-5 text-left shadow-2xl`}>
                 <div className="flex items-start justify-between gap-4">
                     <div>
                         <h2 className="text-lg font-semibold text-fg">{title}</h2>
